@@ -1,6 +1,7 @@
 sentence-transformers
 faiss-cpu
 streamlit
+requests
 #milvus
 #pymilvus
 #openai
