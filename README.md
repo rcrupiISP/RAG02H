@@ -2,7 +2,7 @@
 
 <!-- ![image](https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7) -->
 
-<img src="https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7" alt="image" width="500" height="500">
+<img src="https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7" alt="image" width="500" height="400">
 
 **RAG02H** is a hands-on Python project focused on implementing Retrieval-Augmented Generation (RAG) using open-source tools. This repository is designed for data scientists and banking professionals to build, improve, and extend RAG pipelines with a practical focus on document retrieval and answering questions using vector databases and large language models (LLMs).
 
