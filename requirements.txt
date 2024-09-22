@@ -4,6 +4,7 @@ streamlit
 requests
 arxiv
 markdown-it-py[plugins]
+markdownify
 
 #unstructured
 #milvus

@@ -2,6 +2,7 @@ import os
 import faiss
 from bs4 import BeautifulSoup
 from markdown_it import MarkdownIt
+import markdownify
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
@@ -14,18 +15,15 @@ def convert_html_to_markdown(html_file):
     # Parse the HTML using BeautifulSoup to clean it
     soup = BeautifulSoup(html_content, 'html.parser')
 
-    # Extract text from the HTML content
-    cleaned_html = str(soup)
-
-    # Convert HTML to Markdown using markdown-it-py
-    md = MarkdownIt()
-    markdown_content = md.render(cleaned_html)
+    # Convert HTML to Markdown
+    markdown_content = markdownify.markdownify(str(soup), heading_style="ATX")
 
     return markdown_content
 
 
 # Function to chunk the markdown content
 def chunk_text(text, chunk_size=300):
+    # TODO change asap considering the splitting with \n and a min and max size of the chunk
     words = text.split()
     chunks = [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
     return chunks
@@ -52,7 +50,7 @@ def save_chunks_to_faiss(chunks, index_file):
 if __name__ == "__main__":
     # Set the path of the HTML file
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    html_file_path = os.path.join(project_root, 'data', 'docs', '2303.15936v2.html')
+    html_file_path = os.path.join(project_root, 'data', 'docs', '2401.02900v1.html')
 
     # Set the path to save FAISS index
     faiss_index_file = os.path.join(project_root, 'embeddings', 'faiss_index', 'index.faiss')
