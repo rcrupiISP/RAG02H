@@ -46,7 +46,7 @@ To configure the repository for RAG02H, follow these steps:
 Install the necessary Python libraries:
 
 ```bash
-pip install sentence-transformers faiss-cpu milvus pymilvus openai transformers
+pip install -r requirements.txt
 ```
 
 # Vector Database Configuration
