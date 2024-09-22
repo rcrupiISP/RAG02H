@@ -5,6 +5,7 @@ from markdown_it import MarkdownIt
 import markdownify
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import pickle
 
 
 # Function to read the HTML file and convert it to markdown using markdown-it-py
@@ -45,6 +46,10 @@ def save_chunks_to_faiss(chunks, index_file):
     # Save the FAISS index to file
     faiss.write_index(index, index_file)
     print(f"FAISS index saved to {index_file}")
+
+    # Function to save chunks to a text file
+    with open(index_file + '_pkl', 'wb') as file:
+        pickle.dump(chunks, file)
 
 
 if __name__ == "__main__":
