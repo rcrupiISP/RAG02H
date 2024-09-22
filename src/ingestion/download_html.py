@@ -58,7 +58,7 @@ if __name__ == "__main__":
     # URL of the website to download
     for url in arxiv_links:
         url_html = url.replace('//arxiv.org', '//ar5iv.org')
-        # Set the folder to save the downloaded HTML (e.g., in your project's 'data/webpages' folder)
+        # Set the folder to save the downloaded HTML (e.g., in your project's 'data/docs' folder)
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         project_save_dir = os.path.join(project_root, 'data', 'docs')
 

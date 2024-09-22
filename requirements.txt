@@ -3,6 +3,7 @@ faiss-cpu
 streamlit
 requests
 arxiv
+markdown-it-py[plugins]
 
 #unstructured
 #milvus
