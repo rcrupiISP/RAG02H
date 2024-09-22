@@ -2,6 +2,7 @@ sentence-transformers
 faiss-cpu
 streamlit
 requests
+#unstructured
 #milvus
 #pymilvus
 #openai
