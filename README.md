@@ -38,7 +38,7 @@ The RAG pipeline handles question answering by embedding the user's query, retri
 To configure the repository for RAG02H, follow these steps:
 
 ### Prerequisites
-- Python 3.9+ (e.g., 3.9.7)
+- Python 3.9+ (e.g., 3.9.7 https://www.python.org/downloads/release/python-397/)
 - Recommended package manager: `pip` or `conda`
 - Access to an LLM API (for generation, e.g., OpenAI, HuggingFace Transformers)
 
