@@ -1,0 +1,8 @@
+sentence-transformers
+faiss-cpu
+streamlit
+#milvus
+#pymilvus
+#openai
+#transformers
+
