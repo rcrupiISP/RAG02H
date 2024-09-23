@@ -63,7 +63,7 @@ pip install -r requirements.txt
 To generate answers using a Large Language Model (LLM), you'll need to configure your OpenAI or HuggingFace API keys.
 
 ### AWANLLM API:
-1. Set your AWAN API key as an environment variable:
+1. Set your AWAN API (https://www.awanllm.com/) key as an environment variable:
     ```bash
     export AWAN_API_KEY="your-api-key"
     ```
