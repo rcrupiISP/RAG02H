@@ -5,3 +5,7 @@ VECTOR_DB:
 
 INPUT_DATA:
   PATH_TO_FOLDER: !ENV '${MY_HOME}/data/docs'
+
+PRE_TRAINED_EMB:
+  SPARSE_MODEL_NAME: 'naver/splade-cocondenser-ensembledistil'
+  DENSE_MODEL_NAME: 'all-MiniLM-L6-v2'

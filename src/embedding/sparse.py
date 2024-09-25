@@ -1,19 +1,22 @@
-# todo: move to config
-EMBEDDING_MODEL_NAME = 'all-MiniLM-L6-v2'
-TOKENIZER_MODEL_NAME = "naver/splade-cocondenser-ensembledistil"
-
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
+from utils.read_config import get_config_from_path
 
-# MODEL TO GENERATE SPARSE VECTORS
-tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_MODEL_NAME)
-model = AutoModelForMaskedLM.from_pretrained(TOKENIZER_MODEL_NAME)
+dct_config = get_config_from_path("config.yaml")
+
+tokenizer = AutoTokenizer.from_pretrained(
+    dct_config["PRE_TRAINED_EMB"]["SPARSE_MODEL_NAME"]
+)
+model = AutoModelForMaskedLM.from_pretrained(
+    dct_config["PRE_TRAINED_EMB"]["SPARSE_MODEL_NAME"]
+)
 
 
+# TODO: this implementation is just a placeholder, to be modified!
 def __compute_vector(text):
     """
     Computes a vector from logits and attention mask using ReLU, log, and max operations.
-    from https://qdrant.tech/articles/sparse-vectors/
+    Taken from Qdrant documentation: https://qdrant.tech/articles/sparse-vectors/
     """
     tokens = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
     output = model(**tokens)
@@ -28,6 +31,6 @@ def __compute_vector(text):
 
 def compute_sparse_vector(query_text: str) -> dict[str, list]:
     q_vec, q_tokens = __compute_vector(query_text)
-    out = {'indices': q_vec.nonzero().numpy().flatten().tolist()}
-    out['values'] = q_vec.detach().numpy()[out['indices']].tolist()
+    out = {"indices": q_vec.nonzero().numpy().flatten().tolist()}
+    out["values"] = q_vec.detach().numpy()[out["indices"]].tolist()
     return out
