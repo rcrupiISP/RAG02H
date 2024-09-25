@@ -1,5 +1,5 @@
 VECTOR_DB:
-  PATH_TO_FOLDER: !ENV '${MY_HOME}/embeddings/vdb/qdrant_1'
+  PATH_TO_FOLDER: !ENV '${MY_HOME}/embeddings/vdb/'
   COLLECTION_NAME: articles
   COLL_FRESH_START: True
 

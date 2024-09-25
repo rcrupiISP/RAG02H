@@ -1,6 +1,7 @@
 # Folder data
 data/docs/*
 embeddings/faiss_index/*
+embeddings/vdb/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
