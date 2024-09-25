@@ -5,6 +5,8 @@ requests
 arxiv
 markdown-it-py[plugins]
 markdownify
+qdrant-client>=1.1.1
+numpy==1.26.4 # more compatible with qdrant
 
 #unstructured
 #milvus
@@ -12,3 +14,4 @@ markdownify
 #openai
 #transformers
 #beautifulsoup4
+
