@@ -7,6 +7,8 @@ markdown-it-py[plugins]
 markdownify
 qdrant-client>=1.1.1
 numpy==1.26.4 # more compatible with qdrant
+pyaml-env
+black
 
 #unstructured
 #milvus
@@ -14,4 +16,5 @@ numpy==1.26.4 # more compatible with qdrant
 #openai
 #transformers
 #beautifulsoup4
+
 

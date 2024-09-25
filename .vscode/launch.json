@@ -13,6 +13,20 @@
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             }
+        },
+        {
+            "name": "RUN Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}/src",
+            "justMyCode": false,
+            "env": {
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "MY_HOME": "${workspaceFolder}",
+                "APP_CONF_DIR": "${workspaceFolder}/src/config"
+            }
         }
     ]
 }
