@@ -11,9 +11,7 @@ def list_arxiv_links(keyword, max_results=10):
 
     # Search for papers using the arxiv library
     search = arxiv.Search(
-        query=keyword,
-        max_results=max_results,
-        sort_by=arxiv.SortCriterion.Relevance
+        query=keyword, max_results=max_results, sort_by=arxiv.SortCriterion.Relevance
     )
     # List the paper links
     paper_links = []
@@ -41,7 +39,7 @@ def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
         if os.path.exists(file_path):
             print("this file path already exists: ", file_path)
         else:
-            with open(file_path, 'w', encoding='utf-8') as file:
+            with open(file_path, "w", encoding="utf-8") as file:
                 file.write(response.text)
 
             print(f"Downloaded HTML and saved to {file_path}")
@@ -50,17 +48,22 @@ def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
 
 
 if __name__ == "__main__":
-    keyword = 'riccardo crupi'
+    from utils.read_config import get_config_from_path
+
+    keyword = "riccardo crupi"
 
     # Call the function and list paper links
     arxiv_links = list_arxiv_links(keyword, max_results=5)
 
     # URL of the website to download
     for url in arxiv_links:
-        url_html = url.replace('//arxiv.org', '//ar5iv.org')
-        # Set the folder to save the downloaded HTML (e.g., in your project's 'data/docs' folder)
-        project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        project_save_dir = os.path.join(project_root, 'data', 'docs')
+        url_html = url.replace("//arxiv.org", "//ar5iv.org")
+
+        # Set the folder to save the downloaded HTML
+        dct_config = get_config_from_path("config.yaml")
+        project_save_dir = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
 
         # Call the function to download the HTML
-        download_html_from_url(url_html, project_save_dir, filename=url.split('/')[-1] + '.html')
+        download_html_from_url(
+            url_html, project_save_dir, filename=url.split("/")[-1] + ".html"
+        )
