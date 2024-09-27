@@ -16,23 +16,23 @@ def main_search(searcher: SearchInVdb, query_text: str):
     query_sparse_vector = SparseVector(**compute_sparse_vector(query_text))
     query_dense_vector = compute_dense_vector(query_text)
 
-    print("\n\nDense search:")
-    for r in searcher.dense(query_dense_vector, k=5):
-        print_info(r)
+    # print("\n\nDense search:")
+    # for r in searcher.dense(query_dense_vector, k=5):
+    #     print_info(r)
 
-    print("\n\nSparse search:")
-    for r in searcher.sparse(query_sparse_vector, k=5):
-        print_info(r)
+    # print("\n\nSparse search:")
+    # for r in searcher.sparse(query_sparse_vector, k=5):
+    #     print_info(r)
 
-    print("\n\nHybrid search:")
-    for r in searcher.hybrid_qd(
+    # print("\n\nHybrid search:")
+    res = searcher.hybrid_qd(
         de_query_vector=query_dense_vector,
         sp_query_vector=query_sparse_vector,
         sp_k=20,
         de_k=20,
         k=5,
-    ):
-        print_info(r)
+    )
+    return res
 
 
 if __name__ == "__main__":
