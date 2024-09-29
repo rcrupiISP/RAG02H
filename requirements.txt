@@ -9,6 +9,7 @@ qdrant-client>=1.1.1
 numpy==1.26.4 # more compatible with qdrant
 pyaml-env
 black
+qdrant_client
 
 #unstructured
 #milvus
