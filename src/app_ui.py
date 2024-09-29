@@ -24,14 +24,12 @@ if 'messages' not in st.session_state:
     st.session_state['messages'] = []
 
 # Add input for keywords to trigger PDF download and ingestion
-keyword = st.text_input("Insert keywords to trigger PDF download and ingestion (comma-separated):", "")
+keyword = st.text_input("Insert keywords to trigger PDF download and ingestion:", "")
 
 if keyword:
-    keywords = [kw.strip() for kw in keyword.split(",")]  # Split and clean keywords
-    for kw in keywords:
-        # Trigger the download and ingestion of PDF for each keyword
-        result = download_and_ingest_pdf(kw)
-        st.write(result)
+    # Trigger the download and ingestion of PDF for keywords
+    result = download_and_ingest_pdf(keyword)
+    st.write(result)
 
 # Text input for the user's question
 question = st.text_input("Ask a question:", "")
