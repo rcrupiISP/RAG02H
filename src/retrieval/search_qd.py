@@ -36,6 +36,10 @@ def main_search(searcher: SearchInVdb, query_text: str):
 
 
 if __name__ == "__main__":
+    import dotenv
+
+    dotenv.load_dotenv()
+
     from qdrant_client.qdrant_client import QdrantClient
     from utils.read_config import get_config_from_path
 
@@ -51,4 +55,7 @@ if __name__ == "__main__":
         "these particles are accounted to release 70 MeV inside the scintillator"
     )
 
-    main_search(searcher=searcher, query_text=query_text)
+    print("Search results:")
+    res = main_search(searcher=searcher, query_text=query_text)
+    for r in res:
+        print_info(r)

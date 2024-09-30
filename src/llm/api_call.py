@@ -2,11 +2,15 @@ import os
 import requests
 import json
 from llm.prompt import get_prompt_1, get_prompt_2
+import dotenv
+
 
 # Go to https://www.awanllm.com/, create an account and get the free secret key
 # remember to run in the command line < export AWAN_API_KEY="your-api-key" >
 # or edit in the run Python configuration as environment variable
-AWAN_API_KEY = os.getenv("AWAN_API_KEY")
+def get_api_key(name: str = "AWAN_API_KEY") -> str:
+    dotenv.load_dotenv()
+    return os.environ[name]
 
 
 def awan_model_completion(prompt: str) -> str:
@@ -20,7 +24,7 @@ def awan_model_completion(prompt: str) -> str:
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {AWAN_API_KEY}",
+        "Authorization": f"Bearer {get_api_key()}",
     }
 
     payload_dct = {
@@ -36,6 +40,9 @@ def awan_model_completion(prompt: str) -> str:
         "POST", url, headers=headers, data=payload, verify=False
     )
 
+    logging.debug(
+        f"Raw response: \n{response.text}",
+    )
     response_str = json.loads(response.text)["choices"][0]["text"]
     return response_str
 
@@ -51,7 +58,7 @@ def awan_model_chat(usr_content_msg: str) -> str:
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {AWAN_API_KEY}",
+        "Authorization": f"Bearer {get_api_key()}",
     }
 
     payload_dct = {
@@ -79,7 +86,7 @@ if __name__ == "__main__":
     from retrieval.vdb_wrapper import SearchInVdb
     import logging
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     # logging.StreamHandler().setLevel(level=logging.INFO)
 
     dct_config = get_config_from_path("config.yaml")

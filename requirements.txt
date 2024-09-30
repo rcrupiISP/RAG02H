@@ -8,5 +8,6 @@ qdrant-client>=1.1.1
 numpy==1.26.4 # more compatible with qdrant
 pyaml-env==1.2.1
 black==24.8.0
+python-dotenv==1.0.1
 # Optional
 #faiss-cpu==1.8.0.post1
