@@ -7,6 +7,9 @@ from qdrant_client import models
 from embedding.dense import compute_dense_vector
 from embedding.sparse import compute_sparse_vector
 from ingestion.vdb_wrapper import LoadInVdb
+from logging import getLogger
+
+logger = getLogger("ingestion")
 
 
 # Function to read the HTML file and convert it to markdown using markdown-it-py
@@ -36,7 +39,7 @@ def chunk_text(text, chunk_size=300):
 def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str):
     loader.setup_collection(is_fresh_start=is_fresh_start)
 
-    for f in os.listdir(html_folder_path):
+    for f in os.listdir(html_folder_path):  # TODO: restringere a html...
         html_file_path = os.path.join(html_folder_path, f)
 
         # Convert HTML to markdown
@@ -58,6 +61,7 @@ def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str
                 ],
                 payloads=[{"text": chunk} for chunk in chunks],
             )
+        logger.info(f"Indexing in vect db ended for: {html_file_path}")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,10 @@ import requests
 import os
 import arxiv
 
+from logging import getLogger
+
+logger = getLogger("ingestion")
+
 
 # Function to list paper links from arXiv based on a keyword
 def list_arxiv_links(keyword, max_results=10):
@@ -15,10 +19,10 @@ def list_arxiv_links(keyword, max_results=10):
     )
     # List the paper links
     paper_links = []
-    for result in client.results(search):
+    logger.info("Query results:")
+    for i, result in enumerate(client.results(search)):
         paper_links.append(result.entry_id)
-        print(f"Title: {result.title}")
-        print(f"Link: {result.entry_id}\n")
+        logger.info(f"{i}. Title: {result.title[:20]}, Link: {result.entry_id}")
 
     return paper_links
 
@@ -32,38 +36,45 @@ def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
     if response.status_code == 200:
         # Create the save directory if it doesn't exist
         os.makedirs(save_dir, exist_ok=True)
+        logger.info(f"Saving documents in directory: {save_dir}")
 
         # Save the HTML content to the specified folder
         file_path = os.path.join(save_dir, filename)
 
         if os.path.exists(file_path):
-            print("this file path already exists: ", file_path)
+            logger.info(f"File {filename} already exists.")
         else:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(response.text)
 
-            print(f"Downloaded HTML and saved to {file_path}")
+            logger.info(f"Downloaded and saved: {filename}")
     else:
-        print(f"Failed to download the webpage. Status code: {response.status_code}")
+        logger.error(
+            f"Failed to download the webpage. Status code: {response.status_code}"
+        )
 
 
-if __name__ == "__main__":
-    from utils.read_config import get_config_from_path
-
-    keyword = "riccardo crupi"
-
+def main_html_download(keyword: str, output_dir: str):
     # Call the function and list paper links
     arxiv_links = list_arxiv_links(keyword, max_results=5)
 
     # URL of the website to download
     for url in arxiv_links:
         url_html = url.replace("//arxiv.org", "//ar5iv.org")
-
-        # Set the folder to save the downloaded HTML
-        dct_config = get_config_from_path("config.yaml")
-        project_save_dir = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
-
         # Call the function to download the HTML
         download_html_from_url(
-            url_html, project_save_dir, filename=url.split("/")[-1] + ".html"
+            url_html, output_dir, filename=url.split("/")[-1] + ".html"
         )
+
+
+if __name__ == "__main__":
+    from utils.read_config import get_config_from_path
+
+    logger.setLevel("INFO")
+    keyword = "riccardo crupi"
+
+    # Set the folder to save the downloaded HTML
+    dct_config = get_config_from_path("config.yaml")
+    project_save_dir = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
+
+    main_html_download(keyword=keyword, output_dir=project_save_dir)

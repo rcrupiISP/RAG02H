@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from llm.prompt import get_prompt_1, get_prompt_2
+from retrieval.vdb_wrapper import SearchInVdb
 import dotenv
 
 
@@ -79,11 +80,26 @@ def awan_model_chat(usr_content_msg: str) -> str:
     return response_str
 
 
+def main_api_call(searcher: SearchInVdb, question: str) -> str:
+    p1 = get_prompt_1(question)
+    logging.debug(f"question refinement prompt {p1}")
+    better_question = awan_model_completion(prompt=p1)
+    logging.debug(f"Ameliorated question: {better_question}")
+
+    lst_points = main_search(searcher, query_text=better_question)
+    dct_points = {i: point.payload for i, point in enumerate(lst_points)}
+
+    p2 = get_prompt_2(context=dct_points, question=better_question)
+    logging.debug(f"RAG prompt: {p2}")
+
+    response_text = awan_model_chat(p2)
+    return response_text
+
+
 if __name__ == "__main__":
     from qdrant_client.qdrant_client import QdrantClient
     from utils.read_config import get_config_from_path
     from retrieval.search_qd import main_search
-    from retrieval.vdb_wrapper import SearchInVdb
     import logging
 
     logging.basicConfig(level=logging.DEBUG)
@@ -99,19 +115,7 @@ if __name__ == "__main__":
     print(
         """Hi! Please provide here your question regarding one of the articles which have been loaded."""
     )
-    orig_question = input("your question >>>")
+    question = input("your question >>>")
     # hi, my name is richmond jorge, i'm a software eng, well yaaa use to..ive been a scientist you know..sort of...been to NASA twice, yeah...great stuff.. ahahahhah...just wanna know whether there are any info a bout you know scintillators, I mean particle energy and stuff like that
-
-    p1 = get_prompt_1(orig_question)
-    logging.debug(f"question refinement prompt {p1}")
-    better_question = awan_model_completion(prompt=p1)
-    logging.debug(f"Ameliorated question: {better_question}")
-
-    lst_points = main_search(searcher, query_text=better_question)
-    dct_points = {i: point.payload for i, point in enumerate(lst_points)}
-
-    p2 = get_prompt_2(context=dct_points, question=better_question)
-    logging.debug(f"RAG prompt: {p2}")
-
-    response_text = awan_model_chat(p2)
-    print("RESPONSE: ", response_text)
+    response = main_api_call(searcher, question)
+    print("RESPONSE: ", response)

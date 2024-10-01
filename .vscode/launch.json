@@ -27,6 +27,20 @@
                 "MY_HOME": "${workspaceFolder}",
                 "APP_CONF_DIR": "${workspaceFolder}/src/config"
             }
+        },
+        {
+            "name": "RUN APP",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args":["run", "${file}", "--server.port", "2000"],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "MY_HOME": "${workspaceFolder}",
+                "APP_CONF_DIR": "${workspaceFolder}/src/config"
+            }
         }
     ]
 }
