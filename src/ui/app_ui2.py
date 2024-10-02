@@ -78,6 +78,15 @@ if __name__ == "__main__":
             handlers=[create_log_handler(logging.StreamHandler, log_formatter)]
         )
 
+        # Delete previous message history, if present
+        if "messages" in st.session_state:
+            st.session_state["messages"] = []
+
+        if "user_question" in st.session_state:
+            st.session_state.user_question = None
+
+        st.experimental_rerun()
+
     # Sezione RETRIEVAL
     st.markdown(
         "<div style='background-color: #333333; color: white; padding: 10px;'>Retrieval</div>",
@@ -99,7 +108,7 @@ if __name__ == "__main__":
         st.session_state["messages"] = []
 
     if "user_question" not in st.session_state:
-        st.session_state.user_question = ""
+        st.session_state.user_question = None
 
     def submit_user_question():
         st.session_state.user_question = st.session_state.widget
