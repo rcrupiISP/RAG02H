@@ -1,6 +1,5 @@
 import logging
 from logging import getLogger
-import time
 import streamlit as st
 from ui.util import (
     StreamlitLogHandler,
@@ -10,6 +9,7 @@ from ui.util import (
 from functools import partial
 from ui.initializer import initialize
 
+# TODO: portare in config
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(funcName)s]: %(message)s"
 LOG_LEVEL = "INFO"
 
@@ -48,6 +48,10 @@ if __name__ == "__main__":
         unsafe_allow_html=True,
     )
 
+    keyword_input = st.text_input(
+        "Insert your keyword for the ingestion:", "", key="keyword"
+    )
+
     log_container = st.empty()
 
     st.button(
@@ -67,9 +71,7 @@ if __name__ == "__main__":
         )
 
         # starting ingestion
-        resources.ingest(
-            keyword="Riccardo Crupi"
-        )  # TODO: inserire keyword da dashboard
+        resources.ingest(keyword=keyword_input)
 
         st.session_state.ongoing_ingestion = False
         setup_task_logger(
@@ -87,10 +89,10 @@ if __name__ == "__main__":
         response = resources.llm_gen_answer(question=question)
         return response
 
-    def response_streaming(response: str):
-        for word in response.split():
-            yield word + " "
-            time.sleep(0.05)
+    # def response_streaming(response: str):
+    #     for word in response.split():
+    #         yield word + " "
+    #         time.sleep(0.05)
 
     # Placeholder for previous chat messages
     if "messages" not in st.session_state:
@@ -104,7 +106,7 @@ if __name__ == "__main__":
         st.session_state.widget = ""
 
     # Text input for the user's question
-    opening_msg = "Hi! If you have already completed the ingestion phase, write your question here."
+    opening_msg = "Hi! If you have already completed the ingestion phase, write your question here, then press Enter."
     st.text_input(opening_msg, "", key="widget", on_change=submit_user_question)
 
     if st.session_state.user_question:

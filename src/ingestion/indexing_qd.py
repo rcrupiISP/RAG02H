@@ -39,8 +39,11 @@ def chunk_text(text, chunk_size=300):
 def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str):
     loader.setup_collection(is_fresh_start=is_fresh_start)
 
-    for f in os.listdir(html_folder_path):  # TODO: restringere a html...
+    for f in os.listdir(html_folder_path):
         html_file_path = os.path.join(html_folder_path, f)
+        if not html_file_path.endswith(".html"):
+            logger.info(f"Indexing in vect skipped for file: {html_file_path}")
+            continue
 
         # Convert HTML to markdown
         markdown_text = convert_html_to_markdown(html_file_path)

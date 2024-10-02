@@ -34,8 +34,6 @@ def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
 
     # Check if the request was successful
     if response.status_code == 200:
-        # Create the save directory if it doesn't exist
-        os.makedirs(save_dir, exist_ok=True)
         logger.info(f"Saving documents in directory: {save_dir}")
 
         # Save the HTML content to the specified folder
@@ -54,9 +52,25 @@ def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
         )
 
 
-def main_html_download(keyword: str, output_dir: str):
+def remove_files_by_extension(directory: str, extension: str) -> None:
+    for file_name in os.listdir(directory):
+        if file_name.endswith(extension):
+            file_path = os.path.join(directory, file_name)
+            os.remove(file_path)
+            logger.info(f"Removed file: {file_path}")
+
+
+def main_html_download(
+    keyword: str, output_dir: str, is_fresh_start: bool, n_max_docs: int
+):
     # Call the function and list paper links
-    arxiv_links = list_arxiv_links(keyword, max_results=5)
+    arxiv_links = list_arxiv_links(keyword, max_results=n_max_docs)
+
+    # Create the save directory if it doesn't exist
+    logger.info(f"Output directory for html files: {output_dir}")
+    os.makedirs(output_dir, exist_ok=True)
+    if is_fresh_start:
+        remove_files_by_extension(output_dir, extension=".html")
 
     # URL of the website to download
     for url in arxiv_links:
@@ -76,5 +90,11 @@ if __name__ == "__main__":
     # Set the folder to save the downloaded HTML
     dct_config = get_config_from_path("config.yaml")
     project_save_dir = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
+    n_max_docs = dct_config["INPUT_DATA"]["N_MAX_DOCS"]
 
-    main_html_download(keyword=keyword, output_dir=project_save_dir)
+    main_html_download(
+        keyword=keyword,
+        output_dir=project_save_dir,
+        is_fresh_start=True,
+        n_max_docs=n_max_docs,
+    )

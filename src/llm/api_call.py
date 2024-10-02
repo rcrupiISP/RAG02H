@@ -1,9 +1,11 @@
+import dotenv
+import logging
 import os
 import requests
 import json
 from llm.prompt import get_prompt_1, get_prompt_2
 from retrieval.vdb_wrapper import SearchInVdb
-import dotenv
+from retrieval.search_qd import main_search
 
 
 # Go to https://www.awanllm.com/, create an account and get the free secret key
@@ -99,14 +101,15 @@ def main_api_call(searcher: SearchInVdb, question: str) -> str:
 if __name__ == "__main__":
     from qdrant_client.qdrant_client import QdrantClient
     from utils.read_config import get_config_from_path
-    from retrieval.search_qd import main_search
-    import logging
 
     logging.basicConfig(level=logging.DEBUG)
     # logging.StreamHandler().setLevel(level=logging.INFO)
 
     dct_config = get_config_from_path("config.yaml")
 
+    logging.debug(
+        f'Looking for vec db files in: {dct_config["VECTOR_DB"]["PATH_TO_FOLDER"]}'
+    )
     client = QdrantClient(path=dct_config["VECTOR_DB"]["PATH_TO_FOLDER"])
     searcher = SearchInVdb(
         client=client, coll_name=dct_config["VECTOR_DB"]["COLLECTION_NAME"]
