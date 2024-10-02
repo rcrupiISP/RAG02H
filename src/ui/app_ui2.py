@@ -1,32 +1,11 @@
 import logging
-from logging import getLogger
 import streamlit as st
-from ui.util import (
-    StreamlitLogHandler,
-    create_log_handler,
-    setup_logger as _setup_logger,
-)
-from functools import partial
+from ui.util import StreamlitLogHandler, create_log_handler
 from ui.initializer import initialize
+import streamlit as st
 
-# TODO: portare in config
-LOG_FORMAT = "%(asctime)s %(levelname)s [%(funcName)s]: %(message)s"
-LOG_LEVEL = "INFO"
-
-log_formatter = logging.Formatter(LOG_FORMAT)
-
-task_logger = getLogger("ingestion")
-setup_task_logger = partial(
-    _setup_logger, logger=task_logger, level=LOG_LEVEL, propagate=False
-)
 
 if __name__ == "__main__":
-
-    logging.basicConfig(
-        level=LOG_LEVEL,
-        format=LOG_FORMAT,
-        force=True,
-    )
 
     # Titolo centrale
     st.set_page_config(layout="wide")
@@ -61,12 +40,12 @@ if __name__ == "__main__":
     )
 
     if st.session_state.ongoing_ingestion:
-        setup_task_logger(
+        resources.setup_task_logger(
             handlers=[
                 create_log_handler(
-                    StreamlitLogHandler, log_formatter, log_container.code
+                    StreamlitLogHandler, resources.log_formatter, log_container.code
                 ),
-                create_log_handler(logging.StreamHandler, log_formatter),
+                create_log_handler(logging.StreamHandler, resources.log_formatter),
             ]
         )
 
@@ -74,8 +53,10 @@ if __name__ == "__main__":
         resources.ingest(keyword=keyword_input)
 
         st.session_state.ongoing_ingestion = False
-        setup_task_logger(
-            handlers=[create_log_handler(logging.StreamHandler, log_formatter)]
+        resources.setup_task_logger(
+            handlers=[
+                create_log_handler(logging.StreamHandler, resources.log_formatter)
+            ]
         )
 
         # Delete previous message history, if present
@@ -115,7 +96,7 @@ if __name__ == "__main__":
         st.session_state.widget = ""
 
     # Text input for the user's question
-    opening_msg = "Hi! If you have already completed the ingestion phase, write your question here, then press Enter."
+    opening_msg = "Hi! If you have already completed the ingestion phase, write your question here, then press Enter. No memory of previous messages is retained."
     st.text_input(opening_msg, "", key="widget", on_change=submit_user_question)
 
     if st.session_state.user_question:

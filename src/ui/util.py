@@ -32,5 +32,5 @@ def setup_logger(
     logger.handlers.clear()
     for h in handlers:
         logger.addHandler(h)
-    logger.setLevel(logging.getLevelName(level.upper()))
+    logger.setLevel(level.upper())
     logger.propagate = propagate

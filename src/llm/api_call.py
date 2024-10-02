@@ -46,6 +46,15 @@ def awan_model_completion(prompt: str) -> str:
     logging.debug(
         f"Raw response: \n{response.text}",
     )
+
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        logging.error(
+            f"Status code: {response.status_code} when calling {url}.\n Response text: {response.text}"
+        )
+        raise Exception("HTTP Error") from e
+
     response_str = json.loads(response.text)["choices"][0]["text"]
     return response_str
 
@@ -76,7 +85,14 @@ def awan_model_chat(usr_content_msg: str) -> str:
     response = requests.request(
         "POST", url, headers=headers, data=payload, verify=False
     )
-    print(response.text)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        logging.error(
+            f"Status code: {response.status_code} when calling {url}.\n Response text: {response.text}"
+        )
+        raise Exception("HTTP Error") from e
+
     response_str = json.loads(response.text)["choices"][0]["message"]["content"]
 
     return response_str

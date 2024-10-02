@@ -40,7 +40,7 @@ if __name__ == "__main__":
     COLLECTION_NAME = dct_config["VECTOR_DB"]["COLLECTION_NAME"]
     COLL_FRESH_START = dct_config["VECTOR_DB"]["COLL_FRESH_START"]
     html_folder_path = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
-    fresh_start_dwnld = dct_config["INPUT_DATA"]["IS_FRESH_START"]
+    fresh_start_dwnld = dct_config["INPUT_DATA"]["DOWNLOAD_FRESH_START"]
     n_max_docs = dct_config["INPUT_DATA"]["N_MAX_DOCS"]
     loader = LoadInVdb(client=client, coll_name=COLLECTION_NAME)
 

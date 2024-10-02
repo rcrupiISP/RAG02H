@@ -8,6 +8,12 @@ from functools import partial
 from pydantic import BaseModel, ConfigDict
 from typing import Callable, Optional
 import streamlit as st
+from ui.util import (
+    setup_logger as _setup_logger,
+)
+import sys
+import logging
+from logging import getLogger
 
 
 class AppParams(BaseModel):
@@ -17,14 +23,32 @@ class AppParams(BaseModel):
     vdb_client: Optional[QdrantClient] = None
     searcher: Optional[SearchInVdb] = None
     loader: Optional[LoadInVdb] = None
+    log_formatter: Optional[logging.Formatter] = None
 
     ingest: Optional[Callable[[str], None]] = None
     llm_gen_answer: Optional[Callable[[str], str]] = None
+    setup_task_logger: Optional[Callable[[list[logging.Handler]], None]] = None
 
 
 @st.experimental_singleton
 def initialize() -> AppParams:
     dct_config = get_config_from_path("config.yaml")
+
+    log_formatter = logging.Formatter(dct_config["UI"]["APP_LOG_FORMAT"])
+
+    task_logger = getLogger("ingestion")
+    setup_task_logger = partial(
+        _setup_logger,
+        logger=task_logger,
+        level=dct_config["UI"]["APP_LOG_LEVEL"],
+        propagate=False,
+    )
+
+    logging.basicConfig(
+        level=dct_config["UI"]["APP_LOG_LEVEL"],
+        format=dct_config["UI"]["APP_LOG_FORMAT"],
+        force=True,
+    )
 
     client = QdrantClient(path=dct_config["VECTOR_DB"]["PATH_TO_FOLDER"])
 
@@ -37,7 +61,7 @@ def initialize() -> AppParams:
     collection_name = dct_config["VECTOR_DB"]["COLLECTION_NAME"]
     collection_fresh_start = dct_config["VECTOR_DB"]["COLL_FRESH_START"]
     html_folder_path = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
-    dwnld_fresh_start = dct_config["INPUT_DATA"]["IS_FRESH_START"]
+    dwnld_fresh_start = dct_config["INPUT_DATA"]["DOWNLOAD_FRESH_START"]
     n_max_docs = dct_config["INPUT_DATA"]["N_MAX_DOCS"]
     loader = LoadInVdb(client=client, coll_name=collection_name)
 
@@ -57,7 +81,20 @@ def initialize() -> AppParams:
         vdb_client=client,
         searcher=searcher,
         loader=loader,
+        log_formatter=log_formatter,
         ingest=complete_ingest,
         llm_gen_answer=llm_gen_answer,
+        setup_task_logger=setup_task_logger,
     )
+
+    # patch from https://github.com/streamlit/streamlit/issues/3426
+    def set_global_exception_handler(f):
+        script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
+        script_runner.handle_uncaught_app_exception.__code__ = f.__code__
+
+    def exception_handler(e):
+        st.error(f"Oops, an internal error occurred!", icon="😿")
+
+    set_global_exception_handler(exception_handler)
+
     return out
