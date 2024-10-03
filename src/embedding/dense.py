@@ -9,4 +9,4 @@ EMB_DIM = encoder.get_sentence_embedding_dimension()
 
 
 def compute_dense_vector(query_text: str) -> list:
-    return encoder.encode(query_text).tolist()
+    return encoder.encode(query_text, show_progress_bar=False).tolist()

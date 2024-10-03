@@ -80,5 +80,4 @@ class LoadInVdb:
                 )
             ],
             max_retries=3,
-            verbose=0,
         )
