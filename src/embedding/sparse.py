@@ -1,18 +1,20 @@
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
+
 from utils.read_config import get_config_from_path
 
 dct_config = get_config_from_path("config.yaml")
 
 tokenizer = AutoTokenizer.from_pretrained(
-    dct_config["PRE_TRAINED_EMB"]["SPARSE_MODEL_NAME"]
+    dct_config["PRE_TRAINED_EMB"]["SPARSE_MODEL_NAME"],
+    clean_up_tokenization_spaces=True,
 )
 model = AutoModelForMaskedLM.from_pretrained(
-    dct_config["PRE_TRAINED_EMB"]["SPARSE_MODEL_NAME"]
+    dct_config["PRE_TRAINED_EMB"]["SPARSE_MODEL_NAME"],
 )
 
 
-# TODO: this implementation is just a placeholder, to be modified!
+# TODO: this implementation is just a placeholder, to be modified! watch out for the max len param!
 def __compute_vector(text):
     """
     Computes a vector from logits and attention mask using ReLU, log, and max operations.

@@ -1,5 +1,5 @@
-from typing import Type
 import logging
+from typing import Type
 
 
 class StreamlitLogHandler(logging.Handler):
@@ -11,8 +11,8 @@ class StreamlitLogHandler(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
         self.log_buffer.append(msg)
-        # Limita a 5 righe di log
-        if len(self.log_buffer) > 5:
+        # Limita a 15 righe di log
+        if len(self.log_buffer) > 15:
             self.log_buffer.pop(0)
         self.widget_update_func("\n".join(self.log_buffer))
 

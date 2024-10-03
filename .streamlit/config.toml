@@ -1,0 +1,11 @@
+[server]
+headless = true
+address = "localhost"
+port = 8501
+
+[browser]
+gatherUsageStats = false
+
+[logger]
+level = "info"
+messageFormat = "%(asctime)s %(levelname)s [%(funcName)s]: %(message)s"

@@ -1,11 +1,14 @@
-import dotenv
+import json
 import logging
 import os
+from typing import Any, Optional
+
+import dotenv
 import requests
-import json
+
 from llm.prompt import get_prompt_1, get_prompt_2
-from retrieval.vdb_wrapper import SearchInVdb
 from retrieval.search_qd import main_search
+from retrieval.vdb_wrapper import SearchInVdb
 
 
 # Go to https://www.awanllm.com/, create an account and get the free secret key
@@ -16,33 +19,16 @@ def get_api_key(name: str = "AWAN_API_KEY") -> str:
     return os.environ[name]
 
 
-def awan_model_completion(prompt: str) -> str:
-    """
-    API call to AWAN LLM.
-    :param prompt: (str) text input for the LLM, it is expected to be a complete prompt.
-    :return: (str) answer of the LLM.
-    """
-
-    url = "https://api.awanllm.com/v1/completions"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {get_api_key()}",
-    }
-
-    payload_dct = {
-        "model": "Awanllm-Llama-3-8B-Dolfin",
-        "prompt": prompt,
-        "max_tokens": 1024,
-        "temperature": 0.7,
-    }
-    payload = json.dumps(payload_dct)
-
-    # Remember to enable SSL verification in production!
+def basic_request(
+    url: str,
+    method: str,
+    payload: dict[str, Any],
+    headers: Optional[dict[str, Any]] = None,
+) -> requests.Response:
+    _payload = json.dumps(payload)
     response = requests.request(
-        "POST", url, headers=headers, data=payload, verify=False
+        method, url, headers=headers, data=_payload, verify=False
     )
-
     logging.debug(
         f"Raw response: \n{response.text}",
     )
@@ -54,14 +40,38 @@ def awan_model_completion(prompt: str) -> str:
             f"Status code: {response.status_code} when calling {url}.\n Response text: {response.text}"
         )
         raise Exception("HTTP Error") from e
+    return response
 
+
+def awan_model_completion(prompt: str):
+    """
+    API call to AWAN LLM, "completion" url.
+    :param prompt: (str) text input for the LLM, it is expected to be a complete prompt.
+    :return: (str) answer of the LLM.
+    """
+    url = "https://api.awanllm.com/v1/completions"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {get_api_key()}",
+    }
+
+    payload_dct = {
+        "model": "awanllm-Llama-3-8B-Dolfin",
+        "prompt": prompt,
+        "max_tokens": 1024,
+        "temperature": 0.7,
+    }
+    response = basic_request(
+        url=url, method="POST", payload=payload_dct, headers=headers
+    )
     response_str = json.loads(response.text)["choices"][0]["text"]
     return response_str
 
 
 def awan_model_chat(usr_content_msg: str) -> str:
     """
-    API call to AWAN LLM.
+    API call to awan LLM.
     :param usr_content_msg: (str) text input for the LLM, it is expected to be the content of a user message.
     :return: (str) answer of the LLM.
     """
@@ -74,25 +84,15 @@ def awan_model_chat(usr_content_msg: str) -> str:
     }
 
     payload_dct = {
-        "model": "Awanllm-Llama-3-8B-Dolfin",
+        "model": "awanllm-Llama-3-8B-Dolfin",
         "max_tokens": 1024,
         "temperature": 0.7,
         "messages": [{"role": "user", "content": usr_content_msg}],
     }
-    payload = json.dumps(payload_dct)
 
-    # Remember to enable SSL verification in production!
-    response = requests.request(
-        "POST", url, headers=headers, data=payload, verify=False
+    response = basic_request(
+        url=url, method="POST", payload=payload_dct, headers=headers
     )
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error(
-            f"Status code: {response.status_code} when calling {url}.\n Response text: {response.text}"
-        )
-        raise Exception("HTTP Error") from e
-
     response_str = json.loads(response.text)["choices"][0]["message"]["content"]
 
     return response_str
@@ -116,6 +116,7 @@ def main_api_call(searcher: SearchInVdb, question: str) -> str:
 
 if __name__ == "__main__":
     from qdrant_client.qdrant_client import QdrantClient
+
     from utils.read_config import get_config_from_path
 
     logging.basicConfig(level=logging.DEBUG)

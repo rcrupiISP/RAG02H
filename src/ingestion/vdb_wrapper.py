@@ -1,7 +1,7 @@
 from typing import Union
 from uuid import uuid4
 
-from qdrant_client import models, QdrantClient
+from qdrant_client import QdrantClient, models
 
 from embedding.dense import EMB_DIM
 
@@ -80,7 +80,5 @@ class LoadInVdb:
                 )
             ],
             max_retries=3,
-        )
-        print(
-            f"Number of elements in {self.coll_name}: {self.client.count(collection_name=self.coll_name)}"
+            verbose=0,
         )

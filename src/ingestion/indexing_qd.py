@@ -1,4 +1,5 @@
 import os
+from logging import getLogger
 
 import markdownify
 from bs4 import BeautifulSoup
@@ -7,7 +8,6 @@ from qdrant_client import models
 from embedding.dense import compute_dense_vector
 from embedding.sparse import compute_sparse_vector
 from ingestion.vdb_wrapper import LoadInVdb
-from logging import getLogger
 
 logger = getLogger("ingestion")
 
@@ -28,7 +28,7 @@ def convert_html_to_markdown(html_file):
 
 # Function to chunk the markdown content
 def chunk_text(text, chunk_size=300):
-    # TODO change asap considering the splitting with \n and a min and max size of the chunk
+    # placeholder version
     words = text.split()
     chunks = [
         " ".join(words[i : i + chunk_size]) for i in range(0, len(words), chunk_size)
@@ -52,8 +52,10 @@ def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str
         chunks = chunk_text(markdown_text)
 
         # add the chunks to the vector db
+
         if len(chunks) > 0:
-            # TODO: more informative payloads need to be computed during ingestion phase!
+            logger.info(f"Starting indexing in vect db for: {html_file_path}")
+            # TODO: more informative payloads might be created during ingestion phase
             loader.add_to_collection(
                 dense_vectors=[
                     compute_dense_vector(query_text=chunk) for chunk in chunks
@@ -64,17 +66,21 @@ def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str
                 ],
                 payloads=[{"text": chunk} for chunk in chunks],
             )
-        logger.info(f"Indexing in vect db ended for: {html_file_path}")
+            logger.info(f"Indexing in vect db ended for: {html_file_path}")
+        else:
+            logger.info(
+                f"Indexing in vect db skipped (no chunks) for: {html_file_path}"
+            )
 
 
 if __name__ == "__main__":
     from qdrant_client.qdrant_client import QdrantClient
+
     from utils.read_config import get_config_from_path
 
     dct_config = get_config_from_path("config.yaml")
     client = QdrantClient(path=dct_config["VECTOR_DB"]["PATH_TO_FOLDER"])
 
-    # TODO: create main_indexing with input:
     COLLECTION_NAME = dct_config["VECTOR_DB"]["COLLECTION_NAME"]
     COLL_FRESH_START = dct_config["VECTOR_DB"]["COLL_FRESH_START"]
     html_folder_path = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]

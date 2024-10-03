@@ -85,7 +85,7 @@ if __name__ == "__main__":
     from utils.read_config import get_config_from_path
 
     logger.setLevel("INFO")
-    keyword = "riccardo crupi"
+    keyword = "Gamma ray bursts"
 
     # Set the folder to save the downloaded HTML
     dct_config = get_config_from_path("config.yaml")

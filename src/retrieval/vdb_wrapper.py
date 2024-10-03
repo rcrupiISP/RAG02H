@@ -1,4 +1,4 @@
-from qdrant_client import models, QdrantClient
+from qdrant_client import QdrantClient, models
 
 
 class SearchInVdb:

@@ -1,4 +1,4 @@
-from qdrant_client.models import SparseVector, ScoredPoint
+from qdrant_client.models import ScoredPoint, SparseVector
 
 from embedding.dense import compute_dense_vector
 from embedding.sparse import compute_sparse_vector
@@ -41,6 +41,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
 
     from qdrant_client.qdrant_client import QdrantClient
+
     from utils.read_config import get_config_from_path
 
     dct_config = get_config_from_path("config.yaml")

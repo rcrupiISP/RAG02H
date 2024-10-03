@@ -1,19 +1,19 @@
+import logging
+import sys
+from functools import partial
+from logging import getLogger
+from typing import Callable, Optional
+
+import streamlit as st
+from pydantic import BaseModel, ConfigDict
 from qdrant_client.qdrant_client import QdrantClient
-from utils.read_config import get_config_from_path
-from retrieval.vdb_wrapper import SearchInVdb
+
+from ingestion.ingesting import ingest
 from ingestion.vdb_wrapper import LoadInVdb
 from llm.api_call import main_api_call
-from ingestion.ingesting import ingest
-from functools import partial
-from pydantic import BaseModel, ConfigDict
-from typing import Callable, Optional
-import streamlit as st
-from ui.util import (
-    setup_logger as _setup_logger,
-)
-import sys
-import logging
-from logging import getLogger
+from retrieval.vdb_wrapper import SearchInVdb
+from ui.util import setup_logger as _setup_logger
+from utils.read_config import get_config_from_path
 
 
 class AppParams(BaseModel):
@@ -87,6 +87,11 @@ def initialize() -> AppParams:
         setup_task_logger=setup_task_logger,
     )
 
+    return out
+
+
+@st.experimental_singleton
+def customize():
     # patch from https://github.com/streamlit/streamlit/issues/3426
     def set_global_exception_handler(f):
         script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
@@ -96,5 +101,3 @@ def initialize() -> AppParams:
         st.error(f"Oops, an internal error occurred!", icon="😿")
 
     set_global_exception_handler(exception_handler)
-
-    return out
