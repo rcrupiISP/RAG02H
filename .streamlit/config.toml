@@ -9,3 +9,6 @@ gatherUsageStats = false
 [logger]
 level = "info"
 messageFormat = "%(asctime)s %(levelname)s [%(funcName)s]: %(message)s"
+
+[client]
+showErrorDetails = false

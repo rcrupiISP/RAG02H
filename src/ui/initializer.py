@@ -99,5 +99,6 @@ def customize():
 
     def exception_handler(e):
         st.error(f"Oops, an internal error occurred!", icon="😿")
+        raise Exception('Exception found!') from e
 
     set_global_exception_handler(exception_handler)
