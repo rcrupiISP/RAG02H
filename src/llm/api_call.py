@@ -28,7 +28,7 @@ def basic_request(
 ) -> requests.Response:
     _payload = json.dumps(payload)
     response = requests.request(
-        method, url, headers=headers, data=_payload, verify=False
+        method, url, headers=headers, data=_payload, verify=True
     )
     logging.debug(
         f"Raw response: \n{response.text}",
