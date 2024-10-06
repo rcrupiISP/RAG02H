@@ -1,7 +1,5 @@
 # RAG02H: From Zero to Hero in Retrieval-Augmented Generation
 
-<!-- ![image](https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7) -->
-
 <img src="https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7" alt="image" width="500" height="400">
 
 **RAG02H** is a hands-on Python project focused on implementing Retrieval-Augmented Generation (RAG) using open-source tools. This repository is designed for data scientists to build, improve, and extend RAG pipelines with a practical focus on document retrieval and answering questions using vector databases and large language models (LLMs).
@@ -86,6 +84,8 @@ RAG02H/
 ├── requirements.txt      # Required Python libraries
 ├── README.md             # Project description and setup instructions
 ```
+
+<img src="https://github.com/user-attachments/assets/c9d1c57d-59d7-4246-b377-853f3b81e33b" alt="image" width="700" height="400">
 
 # Running the Project
 
