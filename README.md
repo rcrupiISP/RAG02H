@@ -76,7 +76,7 @@ RAG02H/
 ├── data/
 │   ├── docs/             # Folder containing documents to parse (PDF, HTML, etc.)
 ├── embeddings/
-│   ├── vdb/      # FAISS index storage
+│   ├── vdb/              # Qdrant vector DB
 ├── src/
 |   ├── config/           # YAML file where paramenters and filepath are specified
 │   ├── ingestion/        # Scripts for document parsing and embedding generation
