@@ -90,26 +90,32 @@ RAG02H/
 # Running the Project
 
 ### Step 1: Parse Documents
-To load and parse documents, run the following command:
+To load, parse and save the documents in the vector db, run (or debug) the following:
 
 ```bash
-python src/ingestion/document_parser.py
+src/ingestion/indexing_qd.py
 ```
 
 This will generate embeddings from the documents and store them in the configured vector database.
+Remember to set the environment variable from the file .env (e.g., in PyCharm you have to edit the configuration of the script indexing_qd.py).
 
-### Step 2 [optional]: Launch the Streamlit App
-Start the Streamlit app to interact with the RAG pipeline:
 
-```bash
-streamlit run src/app.py
-```
-
-### Step 3: Ask a Question
-Once the documents are indexed, you can initiate the Retrieval-Augmented Generation (RAG) pipeline by asking a question:
+### Step 2: Ask a Question
+Once the documents are indexed, you can initiate the Retrieval-Augmented Generation (RAG) pipeline by asking a question, run or debug:
 
 ```bash
-python src/app.py --question "What is the financial outlook for 2024?"
+src/llm/api_call.py
 ```
 
-Otherwise, if you run streamlit, once the app is running, you can enter a question in the Streamlit interface. The system will retrieve relevant document chunks and use the LLM to generate an answer based on your query.
+Remember to set the environment variable from the file .env (e.g., in PyCharm you have to edit the configuration of the script api_call.py).
+Warning: the first time SentenceTransformer: all-MiniLM-L6-v2 takes some minutes to be downloaded!
+
+### Step 3 [optional]: Launch the Streamlit App
+Start the Streamlit app to interact with the RAG pipeline (exactly the two steps before):
+
+```bash
+streamlit run .\src\ui\app_ui.py
+```
+
+Asked a question, the system will retrieve relevant document chunks and use the LLM to generate an answer based on your query.
+Again, set in the terminal the .env variables before starting the comand line, as well as you want to run it in debug mode.
