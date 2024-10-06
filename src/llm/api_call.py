@@ -10,6 +10,7 @@ from llm.prompt import get_prompt_1, get_prompt_2
 from retrieval.search_qd import main_search
 from retrieval.vdb_wrapper import SearchInVdb
 
+LLM_MODEL_NAME = "Meta-Llama-3.1-8B-Instruct"
 
 # Go to https://www.awanllm.com/, create an account and get the free secret key
 # remember to run in the command line < export AWAN_API_KEY="your-api-key" >
@@ -57,7 +58,7 @@ def awan_model_completion(prompt: str):
     }
 
     payload_dct = {
-        "model": "awanllm-Llama-3-8B-Dolfin",
+        "model": LLM_MODEL_NAME,
         "prompt": prompt,
         "max_tokens": 1024,
         "temperature": 0.7,
@@ -71,7 +72,7 @@ def awan_model_completion(prompt: str):
 
 def awan_model_chat(usr_content_msg: str) -> str:
     """
-    API call to awan LLM.
+    API call to awan LLM. For more detail see https://www.awanllm.com/quick-start.
     :param usr_content_msg: (str) text input for the LLM, it is expected to be the content of a user message.
     :return: (str) answer of the LLM.
     """
@@ -84,7 +85,7 @@ def awan_model_chat(usr_content_msg: str) -> str:
     }
 
     payload_dct = {
-        "model": "awanllm-Llama-3-8B-Dolfin",
+        "model": LLM_MODEL_NAME,
         "max_tokens": 1024,
         "temperature": 0.7,
         "messages": [{"role": "user", "content": usr_content_msg}],
