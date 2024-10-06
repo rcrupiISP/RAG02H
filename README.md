@@ -1,10 +1,8 @@
 # RAG02H: From Zero to Hero in Retrieval-Augmented Generation
 
-<!-- ![image](https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7) -->
-
 <img src="https://github.com/user-attachments/assets/70d6c2c4-8da1-466b-a40c-70c827d320e7" alt="image" width="500" height="400">
 
-**RAG02H** is a hands-on Python project focused on implementing Retrieval-Augmented Generation (RAG) using open-source tools. This repository is designed for data scientists and banking professionals to build, improve, and extend RAG pipelines with a practical focus on document retrieval and answering questions using vector databases and large language models (LLMs).
+**RAG02H** is a hands-on Python project focused on implementing Retrieval-Augmented Generation (RAG) using open-source tools. This repository is designed for data scientists to build, improve, and extend RAG pipelines with a practical focus on document retrieval and answering questions using vector databases and large language models (LLMs).
 
 ## Project Overview
 
@@ -16,7 +14,7 @@ This pipeline handles the ingestion and processing of documents, transforming th
 - **Document Ingestion**: The system reads documents from local files (e.g., PDF, DOCX, HTML) or a web URL.
 - **Document Parsing**: The content of these documents is parsed and divided into chunks for better embedding generation.
 - **Embedding Generation**: Each chunk of text is converted into a vector embedding using an open-source model like `sentence-transformers`.
-- **Vector Database Storage**: The embeddings are stored in a vector database (e.g., FAISS, Milvus, or Pinecone) for fast similarity search.
+- **Vector Database Storage**: The embeddings are stored in a vector database (e.g., Qdrant) for fast similarity search.
 
 ### 2. Retrieval-Augmented Generation (RAG) Pipeline
 The RAG pipeline handles question answering by embedding the user's query, retrieving relevant document chunks, and using an LLM to generate a final answer.
@@ -24,7 +22,7 @@ The RAG pipeline handles question answering by embedding the user's query, retri
 - **User Query**: The user submits a question to the system.
 - **Query Embedding**: The question is transformed into a vector embedding using the same model as used for documents.
 - **Nearest Neighbors Search**: The vector database retrieves the top relevant document chunks based on cosine similarity to the query embedding.
-- **LLM Generation**: The question and the retrieved chunks are fed into an open-source LLM (e.g., `GPT-3` or `GPT-J`) to generate a comprehensive, context-aware answer.
+- **LLM Generation**: The question and the retrieved chunks are fed into an open-source LLM (e.g., `GPT-4` or `LLAMA3.1`) to generate a comprehensive, context-aware answer.
 
 ### High-Level Pipeline Flow
 1. **Document Parsing Pipeline**:
@@ -40,7 +38,7 @@ To configure the repository for RAG02H, follow these steps:
 ### Prerequisites
 - Python 3.9+ (e.g., 3.9.7 https://www.python.org/downloads/release/python-397/)
 - Recommended package manager: `pip` or `conda`
-- Access to an LLM API (for generation, e.g., OpenAI, HuggingFace Transformers)
+- Access to an LLM API (for generation, e.g., AwanLLM, OpenAI, HuggingFace Transformers)
 
 ### Required Libraries
 Install the necessary Python libraries:
@@ -51,12 +49,11 @@ pip install -r requirements.txt
 
 # Vector Database Configuration
 
-### Using FAISS:
-- No additional setup is required for FAISS. Simply ensure that the `faiss-cpu` package is installed as part of the project dependencies.
+### Using Qdrant:
+- Install Qdrant as specified in the requirements.txt
 
-### Using Milvus:
-- Install Milvus by following their official documentation and set up either a local or cloud instance.
-- Once Milvus is up and running, configure the `pymilvus` connection in the repository by updating the connection settings with your Milvus instance details.
+### Using FAISS [not implemented end-to-end]:
+- No additional setup is required for FAISS. Simply ensure that the `faiss-cpu` package is installed as part of the project dependencies.
 
 # LLM API Configuration
 
@@ -69,17 +66,6 @@ To generate answers using a Large Language Model (LLM), you'll need to configure
     ```
 2. Alternatively, you can store the API key in a `.env` file for easy loading.
 
-### OpenAI API:
-1. Set your OpenAI API key as an environment variable:
-    ```bash
-    export OPENAI_API_KEY="your-api-key"
-    ```
-2. Alternatively, you can store the API key in a `.env` file for easy loading.
-
-### HuggingFace API:
-1. Install and configure the HuggingFace Transformers library.
-2. You can either use a locally available model or make API calls to the HuggingFace model repository for inference.
-
 # Example Repository Structure
 
 ```bash
@@ -88,15 +74,18 @@ RAG02H/
 ├── data/
 │   ├── docs/             # Folder containing documents to parse (PDF, HTML, etc.)
 ├── embeddings/
-│   ├── faiss_index/      # FAISS index storage
+│   ├── vdb/              # Qdrant vector DB
 ├── src/
+|   ├── config/           # YAML file where paramenters and filepath are specified
 │   ├── ingestion/        # Scripts for document parsing and embedding generation
 │   ├── retrieval/        # Query embedding and nearest neighbor search
 │   ├── llm/              # LLM integration for answer generation
-│   ├── app.py            # Main application pipeline
+│   ├── ui/               # Main application pipeline where it is launch the UI application
 ├── requirements.txt      # Required Python libraries
 ├── README.md             # Project description and setup instructions
 ```
+
+<img src="https://github.com/user-attachments/assets/c9d1c57d-59d7-4246-b377-853f3b81e33b" alt="image" width="700" height="400">
 
 # Running the Project
 
