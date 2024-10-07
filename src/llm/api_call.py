@@ -3,7 +3,6 @@ import logging
 import os
 from typing import Any, Optional
 
-import dotenv
 import requests
 
 from llm.prompt import get_prompt_1, get_prompt_2
@@ -17,7 +16,6 @@ LLM_MODEL_NAME = "Meta-Llama-3.1-8B-Instruct"
 # remember to run in the command line < export AWAN_API_KEY="your-api-key" >
 # or edit in the run Python configuration as environment variable
 def get_api_key(name: str = "AWAN_API_KEY") -> str:
-    dotenv.load_dotenv()
     return os.environ[name]
 
 
@@ -120,9 +118,12 @@ def main_api_call(searcher: SearchInVdb, question: str, rewriting: bool = True) 
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
     from qdrant_client.qdrant_client import QdrantClient
 
     from utility.read_config import get_config_from_path
+
+    load_dotenv()
 
     logging.basicConfig(level=logging.DEBUG)
     # logging.StreamHandler().setLevel(level=logging.INFO)

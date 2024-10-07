@@ -5,6 +5,7 @@ from logging import getLogger
 from typing import Callable, Optional
 
 import streamlit as st
+from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict
 from qdrant_client.qdrant_client import QdrantClient
 
@@ -32,6 +33,8 @@ class AppParams(BaseModel):
 
 @st.experimental_singleton
 def initialize() -> AppParams:
+    load_dotenv()
+
     dct_config = get_config_from_path("config.yaml")
 
     log_formatter = logging.Formatter(dct_config["UI"]["APP_LOG_FORMAT"])

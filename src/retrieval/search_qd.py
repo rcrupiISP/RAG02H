@@ -36,10 +36,6 @@ def main_search(searcher: SearchInVdb, query_text: str):
 
 
 if __name__ == "__main__":
-    import dotenv
-
-    dotenv.load_dotenv()
-
     from qdrant_client.qdrant_client import QdrantClient
 
     from utility.read_config import get_config_from_path

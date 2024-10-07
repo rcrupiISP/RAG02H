@@ -31,10 +31,6 @@ def save_chunks_to_faiss(chunks, index_file):
 
 
 if __name__ == "__main__":
-    import dotenv
-
-    dotenv.load_dotenv()
-
     # example of loading one file in faiss index
     project_root = os.getenv("MY_HOME", ".")
 

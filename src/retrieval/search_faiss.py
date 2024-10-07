@@ -24,10 +24,6 @@ def search_in_faiss(index, query, model, k=5):
 
 
 if __name__ == "__main__":
-    import dotenv
-
-    dotenv.load_dotenv()
-
     # Set the path to the FAISS index
     project_root = os.getenv("MY_HOME", ".")
     faiss_index_file = os.path.join(
