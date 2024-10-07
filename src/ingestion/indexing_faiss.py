@@ -31,8 +31,11 @@ def save_chunks_to_faiss(chunks, index_file):
 
 
 if __name__ == "__main__":
-    # example of loading one file in faiss index
+    import dotenv
 
+    dotenv.load_dotenv()
+
+    # example of loading one file in faiss index
     project_root = os.environ["MY_HOME"]
 
     # Set the path of the HTML file
