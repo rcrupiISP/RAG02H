@@ -74,7 +74,9 @@ def initialize() -> AppParams:
         n_max_docs=n_max_docs,
     )
 
-    llm_gen_answer = partial(main_api_call, searcher=searcher)
+    llm_gen_answer = partial(
+        main_api_call, searcher=searcher, rewriting=dct_config["RAG"]["QUERY_REWRITING"]
+    )
 
     out = AppParams(
         dct_config=dct_config,
@@ -99,6 +101,6 @@ def customize():
 
     def exception_handler(e):
         st.error(f"Oops, an internal error occurred!", icon="😿")
-        raise Exception('Exception found!') from e
+        raise Exception("Exception found!") from e
 
     set_global_exception_handler(exception_handler)

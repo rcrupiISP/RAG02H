@@ -10,7 +10,7 @@ def get_config_from_path(file_name: str) -> dict:
     path_to_yaml_files = os.environ["APP_CONF_DIR"]
     full_path = os.path.join(path_to_yaml_files, file_name)
 
-    if full_path[-5:] == ".yaml":
+    if full_path.endswith(".yaml"):
         return parse_config(full_path)
     else:
         raise ValueError(f"Only .yaml files are managed.")

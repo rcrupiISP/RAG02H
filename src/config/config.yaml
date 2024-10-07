@@ -12,6 +12,9 @@ PRE_TRAINED_EMB:
   SPARSE_MODEL_NAME: 'naver/splade-cocondenser-ensembledistil'
   DENSE_MODEL_NAME: 'all-MiniLM-L6-v2'
 
+RAG:
+  QUERY_REWRITING: False
+
 UI:
   APP_LOG_LEVEL: 'INFO'
   APP_LOG_FORMAT: '%(asctime)s %(levelname)s [%(funcName)s]: %(message)s'

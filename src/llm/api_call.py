@@ -12,6 +12,7 @@ from retrieval.vdb_wrapper import SearchInVdb
 
 LLM_MODEL_NAME = "Meta-Llama-3.1-8B-Instruct"
 
+
 # Go to https://www.awanllm.com/, create an account and get the free secret key
 # remember to run in the command line < export AWAN_API_KEY="your-api-key" >
 # or edit in the run Python configuration as environment variable
@@ -99,16 +100,19 @@ def awan_model_chat(usr_content_msg: str) -> str:
     return response_str
 
 
-def main_api_call(searcher: SearchInVdb, question: str) -> str:
+def main_api_call(searcher: SearchInVdb, question: str, rewriting: bool = True) -> str:
     p1 = get_prompt_1(question)
-    logging.debug(f"question refinement prompt {p1}")
-    better_question = awan_model_completion(prompt=p1)
-    logging.debug(f"Ameliorated question: {better_question}")
+    if rewriting:
+        logging.debug(f"question refinement prompt {p1}")
+        _question = awan_model_completion(prompt=p1)
+        logging.debug(f"Ameliorated question: {_question}")
+    else:
+        _question = question
 
-    lst_points = main_search(searcher, query_text=better_question)
+    lst_points = main_search(searcher, query_text=_question)
     dct_points = {i: point.payload for i, point in enumerate(lst_points)}
 
-    p2 = get_prompt_2(context=dct_points, question=better_question)
+    p2 = get_prompt_2(context=dct_points, question=_question)
     logging.debug(f"RAG prompt: {p2}")
 
     response_text = awan_model_chat(p2)

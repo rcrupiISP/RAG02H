@@ -24,6 +24,8 @@ The RAG pipeline handles question answering by embedding the user's query, retri
 - **Nearest Neighbors Search**: The vector database retrieves the top relevant document chunks based on cosine similarity to the query embedding.
 - **LLM Generation**: The question and the retrieved chunks are fed into an open-source LLM (e.g., `GPT-4` or `LLAMA3.1`) to generate a comprehensive, context-aware answer.
 
+NB: this RAG pipeline also supports pre-retrieval query rewriting, leveraging the same LLM technology above. This can be enabled from `src\config\config.yaml`, setting `RAG.QUERY_REWRITING` to `True`. 
+
 ### High-Level Pipeline Flow
 1. **Document Parsing Pipeline**:
     - Read document → Parse content → Chunk text → Generate embeddings → Save to vector database.

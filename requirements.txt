@@ -11,4 +11,4 @@ black==24.8.0
 python-dotenv==1.0.1
 isort==5.13.2
 # Optional
-#faiss-cpu==1.8.0.post1
+# faiss-cpu==1.8.0.post1
