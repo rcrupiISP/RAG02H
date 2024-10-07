@@ -1,8 +1,8 @@
-import requests
 import os
-import arxiv
-
 from logging import getLogger
+
+import arxiv
+import requests
 
 logger = getLogger("ingestion")
 
@@ -82,7 +82,7 @@ def main_html_download(
 
 
 if __name__ == "__main__":
-    from utils.read_config import get_config_from_path
+    from utility.read_config import get_config_from_path
 
     logger.setLevel("INFO")
     keyword = "Gamma ray bursts"

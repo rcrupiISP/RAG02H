@@ -3,7 +3,7 @@ import logging
 import streamlit as st
 
 from ui.initializer import customize, initialize
-from ui.util import StreamlitLogHandler, create_log_handler
+from ui.utils import StreamlitLogHandler, create_log_handler
 
 if __name__ == "__main__":
 

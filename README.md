@@ -63,10 +63,19 @@ To generate answers using a Large Language Model (LLM), you'll need to configure
 
 ### AWANLLM API:
 1. Set your AWAN API (https://www.awanllm.com/) key as an environment variable:
+
+    In bash:
+
     ```bash
     export AWAN_API_KEY="your-api-key"
     ```
-2. Alternatively, you can store the API key in a `.env` file for easy loading.
+    In Powershell:
+
+    ```powershell
+    $env:AWAN_API_KEY="your-api-key"
+    ```
+
+2. Alternatively, you can store the API key in a `.env` (see `RAG02H\.env`) file for easy loading. This is the most convenient option for VS Code users.
 
 # Example Repository Structure
 
@@ -91,25 +100,48 @@ RAG02H/
 
 # Running the Project
 
+### General Notes
+
+Please keep the following in mind throughout the following steps.
+- Ensure that you are using Python 3.9+ and that all libraries and dependendencies are installed (see above).
+- Commands need to be run from the root directory (`RAG02H`).
+- Ensure that `PYTHONPATH` environment variable is set. In particular:
+    - if you want to run a script from (Powershell) terminal, you need to set the env variable like this
+        ```powershell
+        $env:PYTHONPATH="./src"
+        ```
+        before running your script as
+        
+        ```powershell
+        python path/to/script.py
+        ```
+
+        or as 
+
+        ```powershell
+        streamlit run path/to/app.py
+        ```
+    - if you want to use debug/run features of your IDE, just check that the run/debug configurations of the .py script include the setting of this env variable. If you use VS Code, you already have the debug configuration ready to use in `./vscode/launch.json`.
+- if you run code that sends requests to AWAN API, make sure that you have set your API key `AWAN_API_KEY` in the .env file. Never git push your api key!
+
+
 ### Step 1: Parse Documents
-To load, parse and save the documents in the vector db, run (or debug) the following:
+To load, parse and save the documents in the vector db, run (or debug) the following file:
 
 ```bash
-src/ingestion/indexing_qd.py
+.\src\ingestion\indexing_qd.py
 ```
 
 This will generate embeddings from the documents and store them in the configured vector database.
-Remember to set the environment variable from the file .env (e.g., in PyCharm you have to edit the configuration of the script indexing_qd.py).
 
 
 ### Step 2: Ask a Question
-Once the documents are indexed, you can initiate the Retrieval-Augmented Generation (RAG) pipeline by asking a question, run or debug:
+Once the documents are indexed, you can initiate the Retrieval-Augmented Generation (RAG) pipeline by asking a question, run or debug the folling file:
 
 ```bash
-src/llm/api_call.py
+.src\llm\api_call.py
 ```
 
-Remember to set the environment variable from the file .env (e.g., in PyCharm you have to edit the configuration of the script api_call.py).
 Warning: the first time SentenceTransformer: all-MiniLM-L6-v2 takes some minutes to be downloaded!
 
 ### Step 3 [optional]: Launch the Streamlit App
@@ -120,4 +152,3 @@ streamlit run .\src\ui\app_ui.py
 ```
 
 Asked a question, the system will retrieve relevant document chunks and use the LLM to generate an answer based on your query.
-Again, set in the terminal the .env variables before starting the comand line, as well as you want to run it in debug mode.

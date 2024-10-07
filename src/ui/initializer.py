@@ -12,8 +12,8 @@ from ingestion.ingesting import ingest
 from ingestion.vdb_wrapper import LoadInVdb
 from llm.api_call import main_api_call
 from retrieval.vdb_wrapper import SearchInVdb
-from ui.util import setup_logger as _setup_logger
-from utils.read_config import get_config_from_path
+from ui.utils import setup_logger as _setup_logger
+from utility.read_config import get_config_from_path
 
 
 class AppParams(BaseModel):

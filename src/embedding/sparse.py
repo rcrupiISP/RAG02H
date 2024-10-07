@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from utils.read_config import get_config_from_path
+from utility.read_config import get_config_from_path
 
 dct_config = get_config_from_path("config.yaml")
 

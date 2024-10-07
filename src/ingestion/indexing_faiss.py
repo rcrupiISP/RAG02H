@@ -36,7 +36,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
 
     # example of loading one file in faiss index
-    project_root = os.environ["MY_HOME"]
+    project_root = os.getenv("MY_HOME", ".")
 
     # Set the path of the HTML file
     html_file_path = os.path.join(project_root, "data", "docs", "2401.02900v1.html")

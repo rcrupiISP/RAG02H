@@ -29,7 +29,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
 
     # Set the path to the FAISS index
-    project_root = os.environ["MY_HOME"]
+    project_root = os.getenv("MY_HOME", ".")
     faiss_index_file = os.path.join(
         project_root, "embeddings", "faiss_index", "index.faiss"
     )

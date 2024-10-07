@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     from qdrant_client.qdrant_client import QdrantClient
 
-    from utils.read_config import get_config_from_path
+    from utility.read_config import get_config_from_path
 
     dct_config = get_config_from_path("config.yaml")
 
