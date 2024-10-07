@@ -1,39 +1,14 @@
 import os
 from logging import getLogger
 
-import markdownify
-from bs4 import BeautifulSoup
 from qdrant_client import models
 
 from embedding.dense import compute_dense_vector
 from embedding.sparse import compute_sparse_vector
+from ingestion.utils import chunk_text, convert_html_to_markdown
 from ingestion.vdb_wrapper import LoadInVdb
 
 logger = getLogger("ingestion")
-
-
-# Function to read the HTML file and convert it to markdown using markdown-it-py
-def convert_html_to_markdown(html_file):
-    with open(html_file, "r", encoding="utf-8") as file:
-        html_content = file.read()
-
-    # Parse the HTML using BeautifulSoup to clean it
-    soup = BeautifulSoup(html_content, "html.parser")
-
-    # Convert HTML to Markdown
-    markdown_content = markdownify.markdownify(str(soup), heading_style="ATX")
-
-    return markdown_content
-
-
-# Function to chunk the markdown content
-def chunk_text(text, chunk_size=300):
-    # placeholder version
-    words = text.split()
-    chunks = [
-        " ".join(words[i : i + chunk_size]) for i in range(0, len(words), chunk_size)
-    ]
-    return chunks
 
 
 def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str):
