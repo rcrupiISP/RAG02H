@@ -142,8 +142,9 @@ def main_api_call(searcher: SearchInVdb, question: str, rewriting: bool = True) 
     Returns:
         str: The final response text from the LLM after processing.
     """
-    p1 = get_prompt_1(question)
+    logging.info(f'Starting RAG pipeline')
     if rewriting:
+        p1 = get_prompt_1(question)
         logging.debug(f"question refinement prompt {p1}")
         _question = awan_model_completion(prompt=p1)
         logging.debug(f"Ameliorated question: {_question}")
@@ -151,12 +152,13 @@ def main_api_call(searcher: SearchInVdb, question: str, rewriting: bool = True) 
         _question = question
 
     lst_points = main_search(searcher, query_text=_question)
-    dct_points = {i: point.payload for i, point in enumerate(lst_points)}
+    dct_points = {i: point.payload['text'] for i, point in enumerate(lst_points)}
 
     p2 = get_prompt_2(context=dct_points, question=_question)
     logging.debug(f"RAG prompt: {p2}")
 
     response_text = awan_model_chat(p2)
+    logging.info(f'RAG pipeline ended')
     return response_text
 
 

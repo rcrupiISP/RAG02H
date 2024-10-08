@@ -28,9 +28,9 @@ class AppParams(BaseModel):
     loader: Optional[LoadInVdb] = None
     log_formatter: Optional[logging.Formatter] = None
 
-    ingest: Optional[Callable[[str], None]] = None
-    llm_gen_answer: Optional[Callable[[str], str]] = None
-    setup_task_logger: Optional[Callable[[list[logging.Handler]], None]] = None
+    ingest: Optional[Callable[..., None]] = None
+    llm_gen_answer: Optional[Callable[..., str]] = None
+    setup_task_logger: Optional[Callable[..., None]] = None
 
 
 @st.experimental_singleton
