@@ -8,8 +8,10 @@ import requests
 from llm.prompt import get_prompt_1, get_prompt_2
 from retrieval.search_qd import main_search
 from retrieval.vdb_wrapper import SearchInVdb
+from utility.read_config import get_config_from_path
 
-LLM_MODEL_NAME = "Meta-Llama-3.1-8B-Instruct"
+dct_config = get_config_from_path("config.yaml")
+LLM_MODEL_NAME = dct_config["RAG"]["LLM_MODEL_NAME"]
 
 
 # Go to https://www.awanllm.com/, create an account and get the free secret key
@@ -121,14 +123,10 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     from qdrant_client.qdrant_client import QdrantClient
 
-    from utility.read_config import get_config_from_path
-
     load_dotenv()
 
     logging.basicConfig(level=logging.DEBUG)
     # logging.StreamHandler().setLevel(level=logging.INFO)
-
-    dct_config = get_config_from_path("config.yaml")
 
     logging.debug(
         f'Looking for vec db files in: {dct_config["VECTOR_DB"]["PATH_TO_FOLDER"]}'
@@ -143,5 +141,7 @@ if __name__ == "__main__":
     )
     question = input("your question >>>")
     # hi, my name is richmond jorge, i'm a software eng, well yaaa use to..ive been a scientist you know..sort of...been to NASA twice, yeah...great stuff.. ahahahhah...just wanna know whether there are any info a bout you know scintillators, I mean particle energy and stuff like that
-    response = main_api_call(searcher, question)
+    response = main_api_call(
+        searcher, question, rewriting=dct_config["RAG"]["QUERY_REWRITING"]
+    )
     print("RESPONSE: ", response)

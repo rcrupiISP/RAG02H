@@ -91,10 +91,11 @@ if __name__ == "__main__":
     dct_config = get_config_from_path("config.yaml")
     project_save_dir = dct_config["INPUT_DATA"]["PATH_TO_FOLDER"]
     n_max_docs = dct_config["INPUT_DATA"]["N_MAX_DOCS"]
+    fresh_start_dwnld = dct_config["INPUT_DATA"]["DOWNLOAD_FRESH_START"]
 
     main_html_download(
         keyword=keyword,
         output_dir=project_save_dir,
-        is_fresh_start=True,
+        is_fresh_start=fresh_start_dwnld,
         n_max_docs=n_max_docs,
     )
