@@ -8,8 +8,17 @@ logger = getLogger("ingestion")
 
 
 # Function to list paper links from arXiv based on a keyword
-def list_arxiv_links(keyword, max_results=10):
+def list_arxiv_links(keyword: str, max_results: int = 10) -> list[str]:
+    """
+    Lists paper links from arXiv based on a keyword.
 
+    Args:
+        keyword (str): The keyword to search for in arXiv.
+        max_results (int): The maximum number of results to return.
+
+    Returns:
+        List[str]: A list of paper links from arXiv.
+    """
     # Create a client for searching arXiv
     client = arxiv.Client()
 
@@ -28,7 +37,17 @@ def list_arxiv_links(keyword, max_results=10):
 
 
 # Function to download HTML from a website and save it to a folder
-def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
+def download_html_from_url(
+    url: str, save_dir: str, filename: str = "downloaded_page.html"
+) -> None:
+    """
+    Downloads HTML from a given URL and saves it to a specified directory.
+
+    Args:
+        url (str): The URL of the webpage to download.
+        save_dir (str): The directory where the HTML file will be saved.
+        filename (str): The name of the file to save the HTML content as.
+    """
     # Fetch the webpage
     response = requests.get(url)
 
@@ -53,6 +72,13 @@ def download_html_from_url(url, save_dir, filename="downloaded_page.html"):
 
 
 def remove_files_by_extension(directory: str, extension: str) -> None:
+    """
+    Removes files with a specified extension from a directory.
+
+    Args:
+        directory (str): The directory to search for files.
+        extension (str): The file extension to match for removal.
+    """
     for file_name in os.listdir(directory):
         if file_name.endswith(extension):
             file_path = os.path.join(directory, file_name)
@@ -62,7 +88,16 @@ def remove_files_by_extension(directory: str, extension: str) -> None:
 
 def main_html_download(
     keyword: str, output_dir: str, is_fresh_start: bool, n_max_docs: int
-):
+) -> None:
+    """
+    Downloads HTML pages from arXiv based on a search keyword.
+
+    Args:
+        keyword (str): The keyword to search for in arXiv.
+        output_dir (str): The directory where HTML files will be saved.
+        is_fresh_start (bool): Indicates whether to remove pre-existing HTML files.
+        n_max_docs (int): The maximum number of documents to download.
+    """
     # Call the function and list paper links
     arxiv_links = list_arxiv_links(keyword, max_results=n_max_docs)
 

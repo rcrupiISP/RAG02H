@@ -18,6 +18,8 @@ from utility.read_config import get_config_from_path
 
 
 class AppParams(BaseModel):
+    """Stores application parameters and configurations."""
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     dct_config: Optional[dict] = None
@@ -33,6 +35,15 @@ class AppParams(BaseModel):
 
 @st.experimental_singleton
 def initialize() -> AppParams:
+    """
+    Initializes the application parameters and configurations.
+
+    Loads environment variables, configurations, sets up logging, and initializes
+    the Qdrant client and related components.
+
+    Returns:
+        AppParams: The application parameters containing configuration and services.
+    """
     load_dotenv()
 
     dct_config = get_config_from_path("config.yaml")
@@ -97,12 +108,31 @@ def initialize() -> AppParams:
 
 @st.experimental_singleton
 def customize():
-    # patch from https://github.com/streamlit/streamlit/issues/3426
-    def set_global_exception_handler(f):
+    """Customizes the global exception handling for Streamlit.
+
+    Patches the Streamlit exception handler to display a user-friendly error message.
+    (patch from https://github.com/streamlit/streamlit/issues/3426 )
+    Returns:
+        None
+    """
+
+    def set_global_exception_handler(f: Callable[[Exception], None]) -> None:
+        """
+        Sets a global exception handler for Streamlit.
+
+        Args:
+            f (Callable[[Exception], None]): The function to handle exceptions.
+        """
         script_runner = sys.modules["streamlit.runtime.scriptrunner.script_runner"]
         script_runner.handle_uncaught_app_exception.__code__ = f.__code__
 
-    def exception_handler(e):
+    def exception_handler(e: Exception) -> None:
+        """
+        Handles exceptions by displaying an error message in Streamlit.
+
+        Args:
+            e (Exception): The caught exception.
+        """
         st.error(f"Oops, an internal error occurred!", icon="😿")
         raise Exception("Exception found!") from e
 

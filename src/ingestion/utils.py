@@ -1,9 +1,18 @@
+from typing import List
+
 import markdownify
 from bs4 import BeautifulSoup
 
 
-# Function to read the HTML file and convert it to markdown using markdown-it-py
-def convert_html_to_markdown(html_file):
+def convert_html_to_markdown(html_file: str) -> str:
+    """Reads an HTML file and converts its content to Markdown format.
+
+    Args:
+        html_file (str): The path to the HTML file to be converted.
+
+    Returns:
+        str: The converted Markdown content.
+    """
     with open(html_file, "r", encoding="utf-8") as file:
         html_content = file.read()
 
@@ -16,9 +25,19 @@ def convert_html_to_markdown(html_file):
     return markdown_content
 
 
-# Function to chunk the markdown content
-def chunk_text(text, chunk_size=300):
-    # placeholder version
+def chunk_text(text: str, chunk_size: int = 300) -> List[str]:
+    """
+    ---- PLACEHOLDER VERSION ----
+    ---- TO BE MODIFIED ----
+    Chunks the input text into smaller segments of specified size.
+
+    Args:
+        text (str): The text to be chunked.
+        chunk_size (int): The maximum number of words per chunk. Default is 300.
+
+    Returns:
+        List[str]: A list of text chunks.
+    """
     words = text.split()
     chunks = [
         " ".join(words[i : i + chunk_size]) for i in range(0, len(words), chunk_size)

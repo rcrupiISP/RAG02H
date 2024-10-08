@@ -15,10 +15,18 @@ model = AutoModelForMaskedLM.from_pretrained(
 
 
 # TODO: this implementation is just a placeholder, to be modified! watch out for the max len param!
-def __compute_vector(text):
+def __compute_vector(text) -> tuple[torch.Tensor, dict]:
     """
-    Computes a vector from logits and attention mask using ReLU, log, and max operations.
+    Computes a vector from the given text using the model and tokenizer.
     Taken from Qdrant documentation: https://qdrant.tech/articles/sparse-vectors/
+
+    Args:
+    text (str): The input text to compute the vector for.
+
+    Returns:
+        tuple: A tuple containing:
+            - torch.Tensor: The computed vector.
+            - dict: The tokens used for the computation.
     """
     tokens = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
     output = model(**tokens)
@@ -31,7 +39,16 @@ def __compute_vector(text):
     return vec, tokens
 
 
-def compute_sparse_vector(query_text: str) -> dict[str, list]:
+def compute_sparse_vector(query_text: str) -> dict[str, list[float]]:
+    """
+    Computes a sparse vector representation of the query text.
+
+    Args:
+        query_text (str): The text to be converted into a sparse vector.
+
+    Returns:
+        dict: A dictionary containing the sparse vector indices and values.
+    """
     q_vec, q_tokens = __compute_vector(query_text)
     out = {"indices": q_vec.nonzero().numpy().flatten().tolist()}
     out["values"] = q_vec.detach().numpy()[out["indices"]].tolist()

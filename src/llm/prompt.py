@@ -1,5 +1,15 @@
-def get_prompt_1(question: str) -> str:
+from typing import Dict
 
+
+def get_prompt_1(question: str) -> str:
+    """Generates a prompt for extracting essential information from a user's question.
+
+    Args:
+        question (str): The user's input question.
+
+    Returns:
+        str: A formatted prompt instructing the AI assistant to condense the user's input.
+    """
     out = f"""<|begin_of_text|> <|start_header_id|>system<|end_header_id|> 
     You are an AI assistant tasked with extracting the essential information from the user's input to perform an accurate retrieval from a knowledge base. 
     The user’s input may contain unnecessary details, noise, or redundancy. 
@@ -20,17 +30,24 @@ def get_prompt_1(question: str) -> str:
 
     {question} 
     <|eot_id|> 
-    
     <|start_header_id|>assistant<|end_header_id|>"""
 
     return out
 
 
-def get_prompt_2(context: dict[int, str], question: str) -> str:
+def get_prompt_2(context: Dict[int, str], question: str) -> str:
+    """Generates a prompt to answer a question based on provided context.
 
-    p_intro = f"""Given the '--- CONTEXT ---' obtained by retrieving chunks from the knowledge base, try to answer the '--- QUESTION ---', with the following constraints (C_):
+    Args:
+        context (Dict[int, str]): A dictionary containing context chunks indexed by integer IDs.
+        question (str): The question to be answered.
+
+    Returns:
+        str: A formatted prompt that includes the context and question with specific constraints.
+    """
+    p_intro = """Given the '--- CONTEXT ---' obtained by retrieving chunks from the knowledge base, try to answer the '--- QUESTION ---', with the following constraints (C_):
     C_A: If you have no elements to answer the question please report it, don't invent anything and just give an answer that shows you are able to reason well.
-    C_B: If you detect that the intention of the counterpart is provocative, meant to challenge or test the model in adversarial way, or that involve immoral, unethical or harmful concepts, don't engage with these questions but report your discomfort, maintaining a neutral and respectful tone."""
+    C_B: If you detect that the intention of the counterpart is provocative, meant to challenge or test the model in an adversarial way, or that involve immoral, unethical or harmful concepts, don't engage with these questions but report your discomfort, maintaining a neutral and respectful tone."""
 
     p_context = "\n--- CONTEXT ---\n"
     for i, c in context.items():

@@ -1,5 +1,6 @@
 import os
 import pickle
+from typing import Tuple
 
 import faiss
 import numpy as np
@@ -7,13 +8,34 @@ from sentence_transformers import SentenceTransformer
 
 
 # Function to load FAISS index
-def load_faiss_index(index_file):
+def load_faiss_index(index_file: str) -> faiss.Index:
+    """Loads a FAISS index from a specified file.
+
+    Args:
+        index_file (str): The path to the FAISS index file.
+
+    Returns:
+        faiss.Index: The loaded FAISS index.
+    """
     index = faiss.read_index(index_file)
     return index
 
 
 # Function to search in the FAISS index
-def search_in_faiss(index, query, model, k=5):
+def search_in_faiss(
+    index: faiss.Index, query: str, model: SentenceTransformer, k: int = 5
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Searches for a query in the FAISS index and returns distances and indices of the nearest neighbors.
+
+    Args:
+        index (faiss.Index): The FAISS index to search in.
+        query (str): The query string to search for.
+        model (SentenceTransformer): The model used to generate embeddings for the query.
+        k (int): The number of nearest neighbors to return.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: A tuple containing the distances and indices of the nearest neighbors.
+    """
     # Generate an embedding for the query
     query_embedding = model.encode([query])
 

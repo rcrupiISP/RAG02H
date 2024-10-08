@@ -1,3 +1,5 @@
+from typing import List
+
 from qdrant_client.models import ScoredPoint, SparseVector
 
 from embedding.dense import compute_dense_vector
@@ -6,25 +8,40 @@ from retrieval.vdb_wrapper import SearchInVdb
 
 
 def print_info(r: ScoredPoint):
+    """
+    Prints the information of a scored point.
+
+    Args:
+        r (ScoredPoint): The scored point containing id, score, and payload.
+    """
     print("ID:", r.id)
     print("SCORE: ", r.score)
     print("PAYLOAD: ", r.payload)
     print()
 
 
-def main_search(searcher: SearchInVdb, query_text: str):
+def main_search(
+    searcher: SearchInVdb, query_text: str, sp_k: int = 20, de_k: int = 20, k: int = 5
+) -> List[ScoredPoint]:
+    """
+    Performs a search using the provided searcher with the given query text.
+
+    Args:
+        searcher (SearchInVdb): The SearchInVdb instance used to perform the search.
+        query_text (str): The query text to be converted into dense and sparse vectors.
+        sp_k (int): The number of top results to return from the sparse search.
+        de_k (int): The number of top results to return from the dense search.
+        k (int): The total number of results to return.
+
+    Returns:
+        List[ScoredPoint]: The list of scored points resulting from the search.
+    """
     query_sparse_vector = SparseVector(**compute_sparse_vector(query_text))
     query_dense_vector = compute_dense_vector(query_text)
 
-    # print("\n\nDense search:")
-    # for r in searcher.dense(query_dense_vector, k=5):
-    #     print_info(r)
+    # res = searcher.dense(query_dense_vector, k=5)
+    # res = searcher.sparse(query_sparse_vector, k=5)
 
-    # print("\n\nSparse search:")
-    # for r in searcher.sparse(query_sparse_vector, k=5):
-    #     print_info(r)
-
-    # print("\n\nHybrid search:")
     res = searcher.hybrid_qd(
         de_query_vector=query_dense_vector,
         sp_query_vector=query_sparse_vector,

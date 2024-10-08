@@ -8,8 +8,13 @@ from sentence_transformers import SentenceTransformer
 from ingestion.utils import chunk_text, convert_html_to_markdown
 
 
-# Function to save embeddings to FAISS index
-def save_chunks_to_faiss(chunks, index_file):
+def save_chunks_to_faiss(chunks: list[str], index_file: str) -> None:
+    """Saves text chunks to a FAISS index after generating their embeddings.
+
+    Args:
+        chunks (List[str]): A list of text chunks to be embedded and indexed.
+        index_file (str): The path to the file where the FAISS index will be saved.
+    """
     # Load a pre-trained transformer model for embedding generation
     model = SentenceTransformer("all-MiniLM-L6-v2")
 

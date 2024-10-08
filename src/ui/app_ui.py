@@ -81,11 +81,6 @@ if __name__ == "__main__":
         response = resources.llm_gen_answer(question=question)
         return response
 
-    # def response_streaming(response: str):
-    #     for word in response.split():
-    #         yield word + " "
-    #         time.sleep(0.05)
-
     # Placeholder for previous chat messages
     if "messages" not in st.session_state:
         st.session_state["messages"] = []

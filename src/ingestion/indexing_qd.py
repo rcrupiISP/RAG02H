@@ -11,7 +11,17 @@ from ingestion.vdb_wrapper import LoadInVdb
 logger = getLogger("ingestion")
 
 
-def main_indexing(loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str):
+def main_indexing(
+    loader: LoadInVdb, is_fresh_start: bool, html_folder_path: str
+) -> None:
+    """
+    Indexes HTML files by converting them to markdown and adding the resulting chunks to the vector database.
+
+    Args:
+        loader (LoadInVdb): The LoadInVdb instance used to load data into the vector database.
+        is_fresh_start (bool): Indicates whether to start fresh with a new collection.
+        html_folder_path (str): The path to the folder containing HTML files to be indexed.
+    """
     loader.setup_collection(is_fresh_start=is_fresh_start)
 
     for f in os.listdir(html_folder_path):

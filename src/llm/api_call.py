@@ -18,6 +18,15 @@ LLM_MODEL_NAME = dct_config["RAG"]["LLM_MODEL_NAME"]
 # remember to run in the command line < export AWAN_API_KEY="your-api-key" >
 # or edit in the run Python configuration as environment variable
 def get_api_key(name: str = "AWAN_API_KEY") -> str:
+    """
+    Retrieves the API key from environment variables.
+
+    Args:
+        name (str): The name of the environment variable containing the API key.
+
+    Returns:
+        str: The API key.
+    """
     return os.environ[name]
 
 
@@ -27,6 +36,21 @@ def basic_request(
     payload: dict[str, Any],
     headers: Optional[dict[str, Any]] = None,
 ) -> requests.Response:
+    """
+    Sends a basic HTTP request.
+
+    Args:
+        url (str): The URL for the request.
+        method (str): The HTTP method (e.g., 'GET', 'POST').
+        payload (dict[str, Any]): The data to send with the request.
+        headers (Optional[dict[str, Any]]): Optional headers for the request.
+
+    Returns:
+        requests.Response: The response from the request.
+
+    Raises:
+        Exception: If the HTTP request results in an error.
+    """
     _payload = json.dumps(payload)
     response = requests.request(
         method, url, headers=headers, data=_payload, verify=True
@@ -45,11 +69,14 @@ def basic_request(
     return response
 
 
-def awan_model_completion(prompt: str):
-    """
-    API call to AWAN LLM, "completion" url.
-    :param prompt: (str) text input for the LLM, it is expected to be a complete prompt.
-    :return: (str) answer of the LLM.
+def awan_model_completion(prompt: str) -> str:
+    """Makes a completion request to the AWAN LLM API.
+
+    Args:
+        prompt (str): The text input for the LLM, expected to be a complete prompt.
+
+    Returns:
+        str: The response text from the LLM.
     """
     url = "https://api.awanllm.com/v1/completions"
 
@@ -72,10 +99,14 @@ def awan_model_completion(prompt: str):
 
 
 def awan_model_chat(usr_content_msg: str) -> str:
-    """
-    API call to awan LLM. For more detail see https://www.awanllm.com/quick-start.
-    :param usr_content_msg: (str) text input for the LLM, it is expected to be the content of a user message.
-    :return: (str) answer of the LLM.
+    """Makes a chat request to the AWAN LLM API.
+    For more detail see https://www.awanllm.com/quick-start.
+
+    Args:
+        usr_content_msg (str): The user message content for the LLM.
+
+    Returns:
+        str: The response text from the LLM.
     """
 
     url = "https://api.awanllm.com/v1/chat/completions"
@@ -101,6 +132,16 @@ def awan_model_chat(usr_content_msg: str) -> str:
 
 
 def main_api_call(searcher: SearchInVdb, question: str, rewriting: bool = True) -> str:
+    """Handles the main API call flow including question refinement and searching.
+
+    Args:
+        searcher (SearchInVdb): The SearchInVdb instance used for searching.
+        question (str): The user's question to process.
+        rewriting (bool): Whether to refine the question using the LLM.
+
+    Returns:
+        str: The final response text from the LLM after processing.
+    """
     p1 = get_prompt_1(question)
     if rewriting:
         logging.debug(f"question refinement prompt {p1}")
