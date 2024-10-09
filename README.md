@@ -4,7 +4,7 @@
 
 **RAG02H** is a hands-on Python project focused on implementing Retrieval-Augmented Generation (RAG) using open-source tools. This repository is designed for data scientists to build, improve, and extend RAG pipelines with a practical focus on document retrieval and answering questions using vector databases and large language models (LLMs).
 
-**Contributors**: Riccardo Crupi, Paolo Racca, Rubini Stella.
+**Contributors**: Riccardo Crupi, Giulia Genta, Paolo Racca, Rubini Stella.
 
 ## Project Overview
 
