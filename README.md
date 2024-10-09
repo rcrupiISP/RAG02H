@@ -6,6 +6,9 @@
 
 **Contributors**: Riccardo Crupi, Giulia Genta, Paolo Racca, Rubini Stella.
 
+[link course](https://docs.google.com/presentation/d/1odz5vLltQp7uJIaIsbma4dqfmlcUe47fs0wh1Gu93bA/edit?usp=sharing), 
+[link repository setup](https://docs.google.com/presentation/d/1mB7UJ2SmaH6YdhOz63zCq7Tfy98ABkkY/edit?usp=sharing&ouid=116703862880268612161&rtpof=true&sd=true)
+
 ## Project Overview
 
 This repository contains two main pipelines:
