@@ -1,5 +1,6 @@
 # Folder data
 data/docs/*
+data/pretrained/*
 embeddings/faiss_index/*
 embeddings/vdb/*
 
@@ -127,7 +128,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env
 .venv
 env/
 venv/

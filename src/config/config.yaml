@@ -1,11 +1,21 @@
 VECTOR_DB:
-  PATH_TO_FOLDER: !ENV '${MY_HOME}/embeddings/vdb/'
+  PATH_TO_FOLDER: !ENV '${MY_HOME:.}/embeddings/vdb/' # if MY_HOME env var not set, defaults to .
   COLLECTION_NAME: articles
-  COLL_FRESH_START: True
+  COLL_FRESH_START: True # if True, before indexing new docs the old ones are removed (best option if docs are assigned random ids)
 
 INPUT_DATA:
-  PATH_TO_FOLDER: !ENV '${MY_HOME}/data/docs'
+  PATH_TO_FOLDER: !ENV '${MY_HOME:.}/data/docs' # if MY_HOME env var not set, defaults to .
+  N_MAX_DOCS: 5 # max num of docs to be downloaded
+  DOWNLOAD_FRESH_START: True # if True, before downloading new docs the old ones are removed
 
 PRE_TRAINED_EMB:
   SPARSE_MODEL_NAME: 'naver/splade-cocondenser-ensembledistil'
   DENSE_MODEL_NAME: 'all-MiniLM-L6-v2'
+
+RAG:
+  QUERY_REWRITING: False # if True, a query rewriting step is performed before retrieval
+  LLM_MODEL_NAME: 'Meta-Llama-3.1-8B-Instruct'
+
+UI:
+  APP_LOG_LEVEL: 'INFO'
+  APP_LOG_FORMAT: '%(asctime)s %(levelname)s [%(funcName)s]: %(message)s'

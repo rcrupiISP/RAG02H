@@ -5,27 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "DEBUG Current File",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            }
-        },
-        {
-            "name": "RUN Current File",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "cwd": "${workspaceFolder}/src",
+            "cwd": "${workspaceFolder}",
             "justMyCode": false,
             "env": {
                 "PYTHONDONTWRITEBYTECODE": "1",
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "RUN APP",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args":["run", "${workspaceFolder}/src/ui/app_ui.py", "--server.port", "8501"],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONDONTWRITEBYTECODE": "1",
                 "PYTHONPATH": "${workspaceFolder}/src",
-                "MY_HOME": "${workspaceFolder}",
-                "APP_CONF_DIR": "${workspaceFolder}/src/config"
             }
         }
     ]
