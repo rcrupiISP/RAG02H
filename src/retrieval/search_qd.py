@@ -45,9 +45,9 @@ def main_search(
     res = searcher.hybrid_qd(
         de_query_vector=query_dense_vector,
         sp_query_vector=query_sparse_vector,
-        sp_k=20,
-        de_k=20,
-        k=5,
+        sp_k=sp_k,  # e.g., 20
+        de_k=de_k,  # e.g., 20
+        k=k,  # e.g., 5
     )
     return res
 
