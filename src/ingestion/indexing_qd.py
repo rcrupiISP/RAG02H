@@ -34,7 +34,7 @@ def main_indexing(
         markdown_text = convert_html_to_markdown(html_file_path)
 
         # Chunk the Markdown text
-        chunks = chunk_text(markdown_text, chunking_type="markdown_specific")
+        chunks = chunk_text(markdown_text, chunking_mode="markdown_specific")
 
         # add the chunks to the vector db
 
