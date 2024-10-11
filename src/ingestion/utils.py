@@ -4,10 +4,10 @@ from logging import getLogger
 import markdownify
 from bs4 import BeautifulSoup
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.text_splitter import MarkdownHeaderTextSplitter
-from langchain_text_splitters import HTMLSectionSplitter
-from langchain_text_splitters import HTMLHeaderTextSplitter
+import tiktoken
+from langchain_core.documents import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
+from langchain_text_splitters import HTMLHeaderTextSplitter, HTMLSectionSplitter
 
 logger = getLogger("ingestion")
 
@@ -33,14 +33,80 @@ def convert_html_to_markdown(html_file: str) -> str:
     return markdown_content
 
 
-def chunk_text(text: str, chunking_mode: str = "recursive", chunk_size: int = 200, chunk_overlap: int = 0, headers_level: int = 6, include_headers: bool = True) -> List[str]:  
+def num_tokens_from_string(string: str, encoding_name: str = 'cl100k_base') -> int:
+    """
+    Function that returns the number of tokens in a text string.
+    
+    Args:
+    string (str): The text for which we want to calculate the number of embeddings.
+    encoding_name (str): The name of the encoding model. Default 'cl100k_base'.
+
+    Returns:
+        int: Number of tokens of the input string.
+    """
+    # https://stackoverflow.com/questions/76106366/how-to-use-tiktoken-in-offline-mode-computer
+    encoding = tiktoken.get_encoding(encoding_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
+
+
+def merge_chunks(docs: List[Document], threshold: int) -> List[Document]:
+    """ 
+    Merges consecutive chunks of documents based on matching metadata and a token threshold.
+
+    Args:
+        docs (List[Document]): A list of `Document` objects where each object represents a chunk of text. Each document has associated metadata and content.
+        threshold (int): The maximum number of tokens allowed for merging two consecutive documents. If the combined token count of two documents is below this value, they are merged.
+
+    Returns:
+        List[Document]: A list of `Document` objects where some consecutive documents with matching metadata and a combined token count below the threshold have been merged.
+    """
+    merged_docs = []
+    merged_chunks = [0] * len(docs)
+
+    for i, doc in enumerate(docs):
+
+        # If the current document has already been merged, skip it
+        if merged_chunks[i] == 1:
+            continue
+
+        # Case 1: If the current document token count is below the threshold and it has matching metadata with the next one, merge the current document with the next one
+        elif i < len(docs) - 1 and merged_chunks[i] == 0 and doc.metadata == docs[i+1].metadata and num_tokens_from_string(doc.page_content) < threshold:
+            tmp_doc = Document(
+                metadata = doc.metadata,
+                page_content = doc.page_content + "\n" + docs[i+1].page_content)
+            # Mark both documents as merged
+            merged_chunks[i: i+2] = [1, 1]
+
+        # Case 2: If the current document token count is below the threshold and it has matching metadata with the previous one, merge the current document with the previous one
+        elif i > 0 and merged_chunks[i] == 0 and doc.metadata == docs[i-1].metadata and num_tokens_from_string(doc.page_content) < threshold:
+            tmp_doc = Document(
+                metadata = doc.metadata,
+                page_content = docs[i-1].page_content + "\n" + doc.page_content)
+            # Mark both documents as merged
+            merged_chunks[i-1: i+1] = [1, 1]
+            del merged_docs[-1] # Remove the last document because it will be replaced by the merged one
+
+        else:
+            tmp_doc = Document(
+                metadata = doc.metadata,
+                page_content = doc.page_content)
+        
+        # Append the document (merged or not) to the result list
+        merged_docs.append(tmp_doc) 
+    
+    return merged_docs
+
+
+def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int = 200, min_chunk_size: int = 50, chunk_overlap: int = 0, headers_level: int = 6, include_headers: bool = True) -> List[str]:  
     """
     Chunks the input text into smaller segments of specified size.
 
     Args:
         text (str): The text to be chunked.
         chunking_mode (str): The type of chunking to use. Options: 'recursive', 'markdown_specific', or 'html_specific'. Default is 'recursive'.
-        chunk_size (int): The maximum number of token per chunk. Default is 200.
+        max_chunk_size (int): The maximum number of token per chunk. Default is 200.
+        min_chunk_size (int): The minimum number of token per chunk. Default is 50.
         chunk_overlap (int): The number of overlapping tokens between consecutive chunks. Default is 0.
         headers_level (int): Header level to use for splitting in 'markdown_specific' and 'html_specific' modes. Default is 6.
         include_headers (bool): If True, includes headers as part of chunk splitting in 'markdown_specific' and 'html_specific' modes. Default is True.
@@ -82,7 +148,7 @@ def chunk_text(text: str, chunking_mode: str = "recursive", chunk_size: int = 20
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         encoding_name="cl100k_base",
         separators=["  \n", " \n", ".\n", ". ", ".", "\n", " ", ""],
-        chunk_size=chunk_size,
+        chunk_size=max_chunk_size,
         chunk_overlap=chunk_overlap
         )
 
@@ -92,6 +158,7 @@ def chunk_text(text: str, chunking_mode: str = "recursive", chunk_size: int = 20
     splits = text_splitter.split_documents(splits)
 
     # Preparation of chunks and removal of initial special characters
+    splits = merge_chunks(splits, min_chunk_size)
     chunks = [doc.page_content.lstrip(" \n.") for doc in splits]
 
     return chunks
