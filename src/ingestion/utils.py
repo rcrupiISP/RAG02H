@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from logging import getLogger
 
 import markdownify
@@ -55,11 +55,13 @@ def merge_chunks(docs: List[Document], threshold: int) -> List[Document]:
     Merges consecutive chunks of documents based on matching metadata and a token threshold.
 
     Args:
-        docs (List[Document]): A list of `Document` objects where each object represents a chunk of text. Each document has associated metadata and content.
+        docs (List[Document]): A list of Document objects where each object represents a chunk of text. Each document is expected to have:
+            - 'metadata': The header information, used to group paragraphs and subparagraphs.
+            - 'page_content': The textual content of the document.
         threshold (int): The maximum number of tokens allowed for merging two consecutive documents. If the combined token count of two documents is below this value, they are merged.
 
     Returns:
-        List[Document]: A list of `Document` objects where some consecutive documents with matching metadata and a combined token count below the threshold have been merged.
+        List[Document]: A list of Document objects where some consecutive documents with matching metadata and a combined token count below the threshold have been merged.
     """
     merged_docs = []
     merged_chunks = [0] * len(docs)
@@ -97,6 +99,46 @@ def merge_chunks(docs: List[Document], threshold: int) -> List[Document]:
     
     return merged_docs
 
+
+def manage_subpar(docs: List[Document]) -> List[Dict]:
+    """
+    Processes a list of Document objects and organizes paragraphs and subparagraphs based on metadata.
+
+    Args:
+        docs (List[Document]): A list of Document objects where each object represents a chunk of text. Each document is expected to have:
+            - 'metadata': The header information, used to group paragraphs and subparagraphs.
+            - 'page_content': The textual content of the document.
+
+    Returns:
+        List[Dict]: A list of dictionaries where each entry contains:
+            - 'text' (str): The content of the document with leading special characters (spaces, newlines, periods) removed.
+            - 'par_ref' (int): The reference number of the paragraph.
+            - 'subpar_ref' (int): The reference number of the subparagraph.
+    """
+    payloads = []
+    headers = []
+    headers_counter = []
+    par_ref = -1
+
+    for doc in docs:
+        if doc.metadata in headers:
+            subpar_ref += 1 # Incrementing reference number of the subparagraph for each subsequent occurrence of the same header
+            headers_counter[headers.index(doc.metadata)] = subpar_ref #TODO: qui non è i, ma è l'indice dell'headers nella lista sovrastante
+        
+        else:
+            # TODO: The first Document has empty metadata because it has no headers. The case where other empty metadata not associated with the first in the list of documents are encountered is not handled.
+            par_ref += 1    # Incrementing reference number of the paragraph for each new header encountered  
+            subpar_ref = 0
+            headers.append(doc.metadata)  
+            headers_counter.append(subpar_ref)
+
+        payloads.append({
+            "text": doc.page_content.lstrip(" \n."), # Removal of initial special characters
+            "par_ref": par_ref,
+            "subpar_ref": subpar_ref
+        })
+
+    return payloads
 
 def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int = 200, min_chunk_size: int = 50, chunk_overlap: int = 0, headers_level: int = 6, include_headers: bool = True) -> List[str]:  
     """
@@ -159,6 +201,6 @@ def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int 
 
     # Preparation of chunks and removal of initial special characters
     splits = merge_chunks(splits, min_chunk_size)
-    chunks = [doc.page_content.lstrip(" \n.") for doc in splits]
+    chunks = manage_subpar(splits)
 
     return chunks
