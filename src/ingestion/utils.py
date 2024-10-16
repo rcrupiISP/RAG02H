@@ -191,10 +191,10 @@ def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int 
         chunk_overlap=chunk_overlap
         )
 
-    if not splits:
+    if splits:
+        splits = text_splitter.split_documents(splits)
+    else:
         splits = text_splitter.create_documents([text])
-
-    splits = text_splitter.split_documents(splits)
 
     # Preparation of chunks and removal of initial special characters
     splits = merge_chunks(splits, min_chunk_size)
