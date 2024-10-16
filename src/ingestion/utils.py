@@ -58,10 +58,10 @@ def merge_chunks(docs: List[Document], threshold: int) -> List[Document]:
         docs (List[Document]): A list of Document objects where each object represents a chunk of text. Each document is expected to have:
             - 'metadata': The header information, used to group paragraphs and subparagraphs.
             - 'page_content': The textual content of the document.
-        threshold (int): The maximum number of tokens allowed for merging two consecutive documents. If the combined token count of two documents is below this value, they are merged.
+        threshold (int): The token threshold that determines when merging should occur. If a Document object has fewer tokens than this threshold and its metadata matches the previous or next document, it will be merged with the previous or next document.
 
     Returns:
-        List[Document]: A list of Document objects where some consecutive documents with matching metadata and a combined token count below the threshold have been merged.
+        List[Document]: A list of Document objects where smaller chunks (below the threshold) with matching metadata have been merged with their neighboring documents.
     """
     merged_docs = []
     merged_chunks = [0] * len(docs)
