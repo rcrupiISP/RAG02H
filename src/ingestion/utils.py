@@ -117,20 +117,17 @@ def manage_subpar(docs: List[Document]) -> List[Dict]:
     """
     payloads = []
     headers = []
-    headers_counter = []
     par_ref = -1
 
     for doc in docs:
         if doc.metadata in headers:
             subpar_ref += 1 # Incrementing reference number of the subparagraph for each subsequent occurrence of the same header
-            headers_counter[headers.index(doc.metadata)] = subpar_ref #TODO: qui non è i, ma è l'indice dell'headers nella lista sovrastante
         
         else:
             # TODO: The first Document has empty metadata because it has no headers. The case where other empty metadata not associated with the first in the list of documents are encountered is not handled.
             par_ref += 1    # Incrementing reference number of the paragraph for each new header encountered  
             subpar_ref = 0
             headers.append(doc.metadata)  
-            headers_counter.append(subpar_ref)
 
         payloads.append({
             "text": doc.page_content.lstrip(" \n."), # Removal of initial special characters
