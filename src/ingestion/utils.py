@@ -1,5 +1,6 @@
 from typing import List, Dict
 from logging import getLogger
+from copy import deepcopy
 
 import markdownify
 from bs4 import BeautifulSoup
@@ -50,53 +51,37 @@ def num_tokens_from_string(string: str, encoding_name: str = 'cl100k_base') -> i
     return num_tokens
 
 
-def merge_chunks(docs: List[Document], threshold: int) -> List[Document]:
+def merge_chunks(docs: List[Document], min_tkn_num: int, max_tkn_num: int) -> List[Document]:
     """ 
-    Merges consecutive chunks of documents based on matching metadata and a token threshold.
+    Merges consecutive document chunks based on matching metadata and token count thresholds.
 
     Args:
         docs (List[Document]): A list of Document objects where each object represents a chunk of text. Each document is expected to have:
             - 'metadata': The header information, used to group paragraphs and subparagraphs.
             - 'page_content': The textual content of the document.
-        threshold (int): The token threshold that determines when merging should occur. If a Document object has fewer tokens than this threshold and its metadata matches the previous or next document, it will be merged with the previous or next document.
+        min_tkn_num (int): The minimum number of tokens a document should have before considering merging.
+        max_tkn_num (int): The maximum number of tokens allowed after merging chunks.
 
     Returns:
-        List[Document]: A list of Document objects where smaller chunks (below the threshold) with matching metadata have been merged with their neighboring documents.
+        List[Document]: A list of Document objects where smaller chunks (below the threshold) with matching metadata have been merged with following documents.
     """
     merged_docs = []
-    merged_chunks = [0] * len(docs)
+    i = 0
 
-    for i, doc in enumerate(docs):
+    while i < len(docs):
+        merged_docs.append(deepcopy(docs[i]))  # deepcopy is needed here to prevent changes to 'merged_docs' from affecting the original 'docs' list
+        j = i + 1
 
-        # If the current document has already been merged, skip it
-        if merged_chunks[i] == 1:
-            continue
+        # Try to merge the current document with subsequent ones while conditions are met:
+        # - metadata matches
+        # - the total number of tokens after merging is below the max token threshold
+        # - at least one of the two documents has fewer tokens than the min token threshold
+        while j < len(docs) and merged_docs[-1].metadata == docs[j].metadata and num_tokens_from_string(merged_docs[-1].page_content) + num_tokens_from_string(docs[j].page_content) < max_tkn_num and (num_tokens_from_string(merged_docs[-1].page_content) < min_tkn_num or num_tokens_from_string(docs[j].page_content) < min_tkn_num):
+            merged_docs[-1].page_content += "\n" + docs[j].page_content
+            j += 1
+            
+        i = j # Move to the next document (skip over those that were merged)
 
-        # Case 1: If the current document token count is below the threshold and it has matching metadata with the next one, merge the current document with the next one
-        elif i < len(docs) - 1 and merged_chunks[i] == 0 and doc.metadata == docs[i+1].metadata and num_tokens_from_string(doc.page_content) < threshold:
-            tmp_doc = Document(
-                metadata = doc.metadata,
-                page_content = doc.page_content + "\n" + docs[i+1].page_content)
-            # Mark both documents as merged
-            merged_chunks[i: i+2] = [1, 1]
-
-        # Case 2: If the current document token count is below the threshold and it has matching metadata with the previous one, merge the current document with the previous one
-        elif i > 0 and merged_chunks[i] == 0 and doc.metadata == docs[i-1].metadata and num_tokens_from_string(doc.page_content) < threshold:
-            tmp_doc = Document(
-                metadata = doc.metadata,
-                page_content = docs[i-1].page_content + "\n" + doc.page_content)
-            # Mark both documents as merged
-            merged_chunks[i-1: i+1] = [1, 1]
-            del merged_docs[-1] # Remove the last document because it will be replaced by the merged one
-
-        else:
-            tmp_doc = Document(
-                metadata = doc.metadata,
-                page_content = doc.page_content)
-        
-        # Append the document (merged or not) to the result list
-        merged_docs.append(tmp_doc) 
-    
     return merged_docs
 
 
@@ -130,14 +115,14 @@ def manage_subpar(docs: List[Document]) -> List[Dict]:
             headers.append(doc.metadata)  
 
         payloads.append({
-            "text": doc.page_content.lstrip(" \n."), # Removal of initial special characters
+            "text": doc.page_content.lstrip(" \n.").lstrip(".\n"), # Removal of initial special characters
             "par_ref": par_ref,
             "subpar_ref": subpar_ref
         })
 
     return payloads
 
-def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int = 200, min_chunk_size: int = 50, chunk_overlap: int = 0, headers_level: int = 6, include_headers: bool = True) -> List[str]:  
+def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int = 200, min_chunk_size: int = 50, max_emb_tkn: int = 256, chunk_overlap: int = 0, headers_level: int = 6, include_headers: bool = True) -> List[str]:  
     """
     Chunks the input text into smaller segments of specified size.
 
@@ -146,6 +131,7 @@ def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int 
         chunking_mode (str): The type of chunking to use. Options: 'recursive', 'markdown_specific', or 'html_specific'. Default is 'recursive'.
         max_chunk_size (int): The maximum number of token per chunk. Default is 200.
         min_chunk_size (int): The minimum number of token per chunk. Default is 50.
+        max_emb_tkn (int): The maximum number of tokens that the embedding model processes. Default is 256.
         chunk_overlap (int): The number of overlapping tokens between consecutive chunks. Default is 0.
         headers_level (int): Header level to use for splitting in 'markdown_specific' and 'html_specific' modes. Default is 6.
         include_headers (bool): If True, includes headers as part of chunk splitting in 'markdown_specific' and 'html_specific' modes. Default is True.
@@ -197,7 +183,7 @@ def chunk_text(text: str, chunking_mode: str = "recursive", max_chunk_size: int 
         splits = text_splitter.create_documents([text])
 
     # Preparation of chunks and removal of initial special characters
-    splits = merge_chunks(splits, min_chunk_size)
+    splits = merge_chunks(splits, min_chunk_size, max_emb_tkn)
     chunks = manage_subpar(splits)
 
     return chunks
