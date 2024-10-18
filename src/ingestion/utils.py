@@ -70,19 +70,30 @@ def merge_chunks(docs: List[Document], min_tkn_num: int, max_tkn_num: int) -> Li
 
     while i < len(docs):
         merged_docs.append(deepcopy(docs[i]))  # deepcopy is needed here to prevent changes to 'merged_docs' from affecting the original 'docs' list
-        j = i + 1
 
         # Try to merge the current document with subsequent ones while conditions are met:
         # - metadata matches
         # - the total number of tokens after merging is below the max token threshold
         # - at least one of the two documents has fewer tokens than the min token threshold
-        while j < len(docs) and merged_docs[-1].metadata == docs[j].metadata and num_tokens_from_string(merged_docs[-1].page_content) + num_tokens_from_string(docs[j].page_content) < max_tkn_num and (num_tokens_from_string(merged_docs[-1].page_content) < min_tkn_num or num_tokens_from_string(docs[j].page_content) < min_tkn_num):
-            merged_docs[-1].page_content += "\n" + docs[j].page_content
-            j += 1
-            
-        i = j # Move to the next document (skip over those that were merged)
+        i += 1
+        while i < len(docs):
+            cur_n_tkn = num_tokens_from_string(merged_docs[-1].page_content)
+            next_n_tkn = num_tokens_from_string(docs[i].page_content)
 
+            cond_same_meta = merged_docs[-1].metadata == docs[i].metadata
+            cond_min_tkn = (cur_n_tkn < min_tkn_num) or (next_n_tkn < min_tkn_num)
+            cond_max_tkn = (cur_n_tkn + next_n_tkn) < max_tkn_num
+
+            if cond_same_meta and cond_min_tkn and cond_max_tkn:
+                # Merge doc i in the current sequence and go to the next doc
+                merged_docs[-1].page_content += "\n" + docs[i].page_content
+                i += 1
+            else:
+                # Treat doc i as first of a new merging sequence
+                break 
+                
     return merged_docs
+
 
 
 def manage_subpar(docs: List[Document]) -> List[Dict]:
