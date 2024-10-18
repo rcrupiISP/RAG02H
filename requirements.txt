@@ -10,5 +10,9 @@ pyaml-env==1.2.1
 black==24.8.0
 python-dotenv==1.0.1
 isort==5.13.2
+langchain==0.3.3
+tiktoken==0.7.0
+
 # Optional
 # faiss-cpu==1.8.0.post1
+# pip_system_certs==4.0

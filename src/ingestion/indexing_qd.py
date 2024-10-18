@@ -34,7 +34,7 @@ def main_indexing(
         markdown_text = convert_html_to_markdown(html_file_path)
 
         # Chunk the Markdown text
-        chunks = chunk_text(markdown_text)
+        chunks = chunk_text(markdown_text, chunking_mode="markdown_specific")
 
         # add the chunks to the vector db
 
@@ -43,13 +43,13 @@ def main_indexing(
             # TODO: more informative payloads might be created during ingestion phase
             loader.add_to_collection(
                 dense_vectors=[
-                    compute_dense_vector(query_text=chunk) for chunk in chunks
+                    compute_dense_vector(query_text=chunk["text"]) for chunk in chunks
                 ],
                 sparse_vectors=[
-                    models.SparseVector(**compute_sparse_vector(query_text=chunk))
+                    models.SparseVector(**compute_sparse_vector(query_text=chunk["text"]))
                     for chunk in chunks
                 ],
-                payloads=[{"text": chunk} for chunk in chunks],
+                payloads=[{"text": chunk["text"]} for chunk in chunks],
             )
             logger.info(f"Indexing in vect db ended for: {html_file_path}")
         else:
