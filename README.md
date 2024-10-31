@@ -115,16 +115,28 @@ Please keep the following in mind throughout the following steps.
         ```powershell
         $env:PYTHONPATH="./src"
         ```
+        for Linux or Max
+        ```powershell
+        export PYTHONPATH=/src
+        ```
         before running your script as
         
         ```powershell
         python path/to/script.py
+        ```
+        for Linux or Max
+        ```powershell
+        python path\to\script.py
         ```
 
         or as 
 
         ```powershell
         streamlit run path/to/app.py
+        ```
+        for Linux or Max
+        ```powershell
+        streamlit run path\to\app.py
         ```
     - if you want to use debug/run features of your IDE, just check that the run/debug configurations of the .py script include the setting of this env variable. If you use VS Code, you already have the debug configuration ready to use in `./vscode/launch.json`.
 - if you run code that sends requests to AWAN API, make sure that you have set your API key `AWAN_API_KEY` in the .env file. Never git push your api key!
@@ -144,7 +156,7 @@ This will generate embeddings from the documents and store them in the configure
 Once the documents are indexed, you can initiate the Retrieval-Augmented Generation (RAG) pipeline by asking a question, run or debug the folling file:
 
 ```bash
-.src\llm\api_call.py
+.\src\llm\api_call.py
 ```
 
 Warning: the first time SentenceTransformer: all-MiniLM-L6-v2 takes some minutes to be downloaded!
