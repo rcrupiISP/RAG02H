@@ -117,7 +117,7 @@ Please keep the following in mind throughout the following steps.
         ```
         for Linux or Max
         ```powershell
-        export PYTHONPATH=/src
+        export PYTHONPATH=\src
         ```
         before running your script as
         
